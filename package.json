@@ -12,29 +12,54 @@
   "activationEvents": [],
   "main": "./dist/extension.js",
   "contributes": {
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "memcached-view",
+          "title": "Memcached View",
+          "icon": "resources/icon.svg"
+        }
+      ]
+    },
+    "views": {
+      "memcached-view": [
+        {
+          "id": "memcached-list",
+          "name": "Memcached View",
+          "icon": "resources/icon.svg",
+          "contextualTitle": "Memcached View"
+        }
+      ]
+    },
     "commands": [
       {
-        "command": "memcached-viewer.open",
-        "title": "Open Memcached Viewer"
+        "command": "memcached-list.refresh",
+        "title": "Refresh",
+        "icon": {
+          "light": "resources/light/refresh.svg",
+          "dark": "resources/dark/refresh.svg"
+        }
+      },
+      {
+        "command": "memcached-list.add",
+        "title": "Add",
+        "icon": {
+          "light": "resources/light/folder.svg",
+          "dark": "resources/dark/folder.svg"
+        }
       }
     ],
-    "views": {
-      "memcached": [
+    "menus": {
+      "view/title": [
         {
-          "id":"memcached",
-          "name":"memcached",
-          "title": "Memcached View",
-          "icon": "",
-          "description": "",
-          "when": "viewContainer == sidebar"
+          "command": "memcached-list.refresh",
+          "when": "view == memcached-list",
+					"group": "navigation"
         },
         {
-          "id":"tree",
-          "name":"tree",
-          "title": "Memcached View",
-          "icon": "",
-          "description": "",
-          "when": "viewContainer == sidebar"
+          "command": "memcached-list.add",
+          "when": "view == memcached-list",
+					"group": "navigation"
         }
       ]
     }

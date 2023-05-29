@@ -1,0 +1,38 @@
+<html>
+
+<head>
+    <title>Memcached - New Connection Settings</title>
+    <script>
+        const vscode = acquireVsCodeApi();
+        function testConnection() {
+            host = document.getElementById("host").value;
+            port = document.getElementById("port").value;
+            const message = {type:'testConnection', data:{host: host, port:port}};
+            vscode.postMessage(message);
+        };
+
+        function connectServer() {
+            host = document.getElementById("host").value;
+            port = document.getElementById("port").value;
+            username = document.getElementById("username").value;
+            password = document.getElementById("password").value;
+            const message = {type:'connectServer', data:{host, port, username, password}};
+            vscode.postMessage(message);
+        };
+    </script>
+</head>
+
+<body>
+    <h1>IP address of the memcached server:</h1>
+    <input id="host" type="text" placeholder="(optional) host" />
+    <h1>Port of the memcached server:</h1>
+    <input id="port" type="number" placeholder="(optional) port" />
+    <h1>Connection username:</h1>
+    <input id="username" type="text" placeholder="(optional) username" />
+    <h1>Authentication password:</h1>
+    <input id="password" type="password" placeholder="(optional) password" />
+    <input id="test" type="button" value="Test Connection" onclick="testConnection()"/>
+    <input id="connect" type="button" value="OK" onclick="connectServer()" />
+</body>
+
+</html>
