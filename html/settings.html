@@ -5,20 +5,31 @@
     <script>
         const vscode = acquireVsCodeApi();
         function testConnection() {
-            host = document.getElementById("host").value;
-            port = document.getElementById("port").value;
-            const message = {type:'testConnection', data:{host: host, port:port}};
+            host = document.getElementById("host").value || "localhost";
+            port = document.getElementById("port").value || 11211;
+            const message = { type: 'testConnection', data: { host, port } };
             vscode.postMessage(message);
         };
 
         function connectServer() {
-            host = document.getElementById("host").value;
-            port = document.getElementById("port").value;
+            host = document.getElementById("host").value || "localhost";
+            port = document.getElementById("port").value || 11211;
             username = document.getElementById("username").value;
             password = document.getElementById("password").value;
-            const message = {type:'connectServer', data:{host, port, username, password}};
+            const message = { type: 'connectServer', data: { host, port, username, password } };
             vscode.postMessage(message);
         };
+
+        window.addEventListener('message', (event) => {
+            const message = event.data;
+
+            if (message.type === 'testConnection') {
+                document.getElementById("result").innerHTML = `<div>${message.result == 0 ? "Connection Successed!" : "Connection Failed!"}</div>`;
+                // Respond back to the extension
+            } else if (message.type === 'connectServer'){
+
+            }
+        });
     </script>
 </head>
 
@@ -30,9 +41,10 @@
     <h1>Connection username:</h1>
     <input id="username" type="text" placeholder="(optional) username" />
     <h1>Authentication password:</h1>
-    <input id="password" type="password" placeholder="(optional) password" />
-    <input id="test" type="button" value="Test Connection" onclick="testConnection()"/>
-    <input id="connect" type="button" value="OK" onclick="connectServer()" />
+    <input id="password" type="password" placeholder="(optional) password" /><br />
+    <input id="test" type="button" value="Test Connection" onclick="testConnection()" />
+    <input id="connect" type="button" value="OK" onclick="connectServer()" /><br />
+    <div id="result"></div>
 </body>
 
 </html>
