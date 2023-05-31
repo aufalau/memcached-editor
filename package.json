@@ -17,7 +17,7 @@
         {
           "id": "memcached-view",
           "title": "Memcached View",
-          "icon": "resources/icon_gray.png"
+          "icon": "resources/icon.png"
         }
       ]
     },
@@ -34,18 +34,12 @@
       {
         "command": "memcached-list.refresh",
         "title": "Refresh",
-        "icon": {
-          "light": "resources/light/refresh.svg",
-          "dark": "resources/dark/refresh.svg"
-        }
+        "icon": "$(refresh)"
       },
       {
         "command": "memcached-list.add",
         "title": "Add",
-        "icon": {
-          "light": "resources/light/folder.svg",
-          "dark": "resources/dark/folder.svg"
-        }
+        "icon": "$(add)"
       }
     ],
     "menus": {

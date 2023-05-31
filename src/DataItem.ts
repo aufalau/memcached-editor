@@ -2,6 +2,7 @@ import * as vscode from 'vscode';
 import * as fs from 'fs';
 import * as path from 'path';
 import { getMemcachedItems, getMemcachedSlabs } from './Tools';
+import { ThemeIcon } from 'vscode';
 
 export class DataItem extends vscode.TreeItem {
 
@@ -17,17 +18,17 @@ export class DataItem extends vscode.TreeItem {
 
         this.tooltip = undefined;
         this.description = undefined;
-        if (this.itemType === ItemType.itemServer || this.itemType === ItemType.itemSlab) {
+        if (this.itemType === ItemType.itemServer) {
             this.iconPath = {
                 light: path.join(__filename, '..', '..', 'resources', 'icon.svg'),
                 dark: path.join(__filename, '..', '..', 'resources', 'icon.svg')
             };
         }
+        else if(this.itemType === ItemType.itemSlab){
+            this.iconPath = new ThemeIcon('database');
+        }
         else {
-            this.iconPath = {
-                light: path.join(__filename, '..', '..', 'resources', 'light', 'document.svg'),
-                dark: path.join(__filename, '..', '..', 'resources', 'dark', 'document.svg')
-            };
+            this.iconPath = new ThemeIcon('key');
         }
     }
 
