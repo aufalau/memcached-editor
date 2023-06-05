@@ -16,7 +16,7 @@
       "activitybar": [
         {
           "id": "memcached-view",
-          "title": "Memcached View",
+          "title": "Memcached Viewer",
           "icon": "resources/icon.png"
         }
       ]
@@ -25,34 +25,91 @@
       "memcached-view": [
         {
           "id": "memcached-list",
-          "name": "Memcached View",
-          "contextualTitle": "Memcached View"
+          "name": "memcached-view",
+          "contextualTitle": "Memcached Server List"
         }
       ]
     },
     "commands": [
       {
-        "command": "memcached-list.refresh",
-        "title": "Refresh",
-        "icon": "$(refresh)"
+        "command": "memcached.list.refresh",
+        "title": "Refresh Servers List",
+        "icon": "$(refresh)",
+        "category": "Memcached"
       },
       {
-        "command": "memcached-list.add",
-        "title": "Add",
-        "icon": "$(add)"
+        "command": "memcached.list.add",
+        "title": "Add Server",
+        "icon": "$(add)",
+        "category": "Memcached"
+      },{
+        "command": "memcached.server.reload",
+        "title": "Reload Server",
+        "icon": "${refresh}",
+        "category": "Memcached"
+      },{
+        "command": "memcached.server.edit",
+        "title": "Edit Settings",
+        "icon": "${edit}",
+        "category": "Memcached"
+      },{
+        "command": "memcached.server.delete",
+        "title": "Delete Server",
+        "icon": "${trashcan}",
+        "category": "Memcached"
+      },{
+        "command": "memcached.slab.filter",
+        "title": "Filter Slab",
+        "icon": "${refresh}",
+        "category": "Memcached"
+      },{
+        "command": "memcached.slab.reload",
+        "title": "Reload Slab",
+        "icon": "${refresh}",
+        "category": "Memcached"
+      },{
+        "command": "memcached.key.operator",
+        "title":"Open Item"
       }
     ],
     "menus": {
       "view/title": [
         {
-          "command": "memcached-list.refresh",
+          "command": "memcached.list.add",
           "when": "view == memcached-list",
           "group": "navigation"
         },
         {
-          "command": "memcached-list.add",
+          "command": "memcached.list.refresh",
           "when": "view == memcached-list",
           "group": "navigation"
+        }
+      ],
+      "view/item/context": [
+        {
+          "command": "memcached.server.reload",
+          "when": "viewItem == server",
+          "group": "inline"
+        },
+        {
+          "command": "memcached.server.edit",
+          "when": "viewItem == server",
+          "group": "inline"
+        },
+        {
+          "command": "memcached.server.delete",
+          "when": "viewItem == server",
+          "group": "inline"
+        },
+        {
+          "command": "memcached.slab.filter",
+          "when": "viewItem == slab",
+          "group": "inline"
+        },
+        {
+          "command": "memcached.slab.reload",
+          "when": "viewItem == slab",
+          "group": "inline"
         }
       ]
     }

@@ -1,20 +1,20 @@
 import * as Memcached from 'memcached';
 
-export function valueForKey(obj: any, key:string):any{
-    if(obj === undefined) {return undefined;}
+export function valueForKey(obj: any, key: string): any {
+    if (obj === undefined) { return undefined; }
     const keys = Object.keys(obj); // ['foo', 'baz', 'qux']
     const index = keys.indexOf(key); // 1
     return Object.values(obj)[index];
 }
-export async function getMemcachedSlabs(server:string) : Promise<{slabid:string, count:number}[]>{
+export async function getMemcachedSlabs(server: string): Promise<{ slabid: string, count: number }[]> {
     const client = new Memcached(server, {
         retries: 10,
         retry: 10000,
         remove: true
-      });
+    });
 
-      return new Promise((resolve, reject)=>{
-        var slabids:{slabid:string, count:number}[] = [];
+    return new Promise((resolve, reject) => {
+        var slabids: { slabid: string, count: number }[] = [];
         client.items((err, data) => {
             if (err) {
                 console.error(err);
@@ -24,8 +24,7 @@ export async function getMemcachedSlabs(server:string) : Promise<{slabid:string,
             data.forEach(element => {
                 var key = Object.keys(element)[0];
                 var count = valueForKey(element[key], 'number');
-
-                slabids.push({slabid:key, count:count});
+                if (key && count) { slabids.push({ slabid: key, count: count }); }
             });
 
             resolve(slabids);
@@ -33,22 +32,22 @@ export async function getMemcachedSlabs(server:string) : Promise<{slabid:string,
     });
 }
 
-export async function getMemcachedItems(server:string, slabid:string, count:number) : Promise<string[]>{
+export async function getMemcachedItems(server: string, slabid: string, count: number): Promise<string[]> {
     const client = new Memcached(server, {
         retries: 10,
         retry: 10000,
         remove: true
-      });
+    });
 
-    return new Promise((resolve, reject)=>{
-        var result:string[] = [];
+    return new Promise((resolve, reject) => {
+        var result: string[] = [];
 
-        client.cachedump(server || "", Number(slabid), count, (e, v)=>{
-            if(Array.isArray(v)){
+        client.cachedump(server || "", Number(slabid), count, (e, v) => {
+            if (Array.isArray(v)) {
                 v.forEach(e => {
                     result.push(valueForKey(e, 'key'));
                 });
-            }else{
+            } else if(v){
                 result.push(valueForKey(v, 'key'));
             }
             resolve(result);

@@ -3,31 +3,33 @@
 import * as vscode from 'vscode';
 import * as path from 'path';
 import { DataProvider } from './DataProvider';
+import { ServerItem, SlabItem, KeyItem } from './DataItem';
 
 // This method is called when your extension is activated
 // Your extension is activated the very first time the command is executed
 export function activate(context: vscode.ExtensionContext) {
-	// const rootPath = (vscode.workspace.workspaceFolders && (vscode.workspace.workspaceFolders.length > 0)) ? vscode.workspace.workspaceFolders[0].uri.fsPath : undefined;
-
 	const memcachedProvider = new DataProvider(context);
-	vscode.window.registerTreeDataProvider('memcached-list', memcachedProvider);
-	vscode.commands.registerCommand('memcached-list.refresh', () => memcachedProvider.refresh());
-	// vscode.commands.registerCommand('extension.openPackageOnNpm', moduleName => vscode.commands.executeCommand('vscode.open', vscode.Uri.parse(`https://www.npmjs.com/package/${moduleName}`)));
-	vscode.commands.registerCommand('memcached-list.add', () => memcachedProvider.addServer());
-	// vscode.commands.registerCommand('nodeDependencies.editEntry', (node: Dependency) => vscode.window.showInformationMessage(`Successfully called edit entry on ${node.label}.`));
-	// vscode.commands.registerCommand('nodeDependencies.deleteEntry', (node: Dependency) => vscode.window.showInformationMessage(`Successfully called delete entry on ${node.label}.`));
+	// vscode.window.registerTreeDataProvider('memcached-list', memcachedProvider);
+	const treeView = vscode.window.createTreeView('memcached-list', {treeDataProvider:memcachedProvider});
+	treeView.onDidChangeSelection(evt => memcachedProvider.onDidChangeSelection(evt));
 
-	// const disposable = vscode.commands.registerCommand("memcached-viewer.open", function () {
-	// 	vscode.window.showInformationMessage('Welcome Memcached Viewer!');
-	// 	openView(context);
-	// });
+	vscode.commands.registerCommand('memcached.list.add', () => memcachedProvider.addServer());
+	vscode.commands.registerCommand('memcached.list.refresh', () => memcachedProvider.refresh());
 
-	// context.subscriptions.push(disposable);
+	vscode.commands.registerCommand('memcached.server.reload', (element: ServerItem) => memcachedProvider.refreshServer(element));
+	vscode.commands.registerCommand('memcached.server.edit', (element: ServerItem) => memcachedProvider.editServer(element));
+	vscode.commands.registerCommand('memcached.server.delete', (element: ServerItem) => memcachedProvider.deleteServer(element));
 
-	// const treeDataProvider = getTreeDataProvider();
-    // const treeView = createTreeView(context);
+	vscode.commands.registerCommand('memcached.slab.filter', (element: SlabItem) => {
+		vscode.window.showInformationMessage(`Memcached.Slab.Filter ${element.label}`);
+	});
+	vscode.commands.registerCommand('memcached.slab.reload', (element: SlabItem) => {
+		vscode.window.showInformationMessage(`Memcached.Slab.Reload ${element?.label}`);
+	});
 
-    // context.subscriptions.push(registerCommands(treeView))
+	vscode.commands.registerCommand('memcached.key.operator', (element: KeyItem) => {
+		element.onClick();
+	});
 }
 
 // This method is called when your extension is deactivated
