@@ -45,27 +45,27 @@
       },{
         "command": "memcached.server.reload",
         "title": "Reload Server",
-        "icon": "${refresh}",
+        "icon": "$(refresh)",
         "category": "Memcached"
       },{
         "command": "memcached.server.edit",
         "title": "Edit Settings",
-        "icon": "${edit}",
+        "icon": "$(edit)",
         "category": "Memcached"
       },{
         "command": "memcached.server.delete",
         "title": "Delete Server",
-        "icon": "${trashcan}",
+        "icon": "$(trashcan)",
         "category": "Memcached"
       },{
         "command": "memcached.slab.filter",
         "title": "Filter Slab",
-        "icon": "${refresh}",
+        "icon": "$(refresh)",
         "category": "Memcached"
       },{
         "command": "memcached.slab.reload",
         "title": "Reload Slab",
-        "icon": "${refresh}",
+        "icon": "$(refresh)",
         "category": "Memcached"
       },{
         "command": "memcached.key.operator",
