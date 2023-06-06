@@ -1,0 +1,65 @@
+<html>
+
+<head>
+    <title>Memcached - New Connection Settings</title>
+    <script>
+        const vscode = acquireVsCodeApi();
+        
+        function syncData() {
+            server = document.getElementById("server").innerHTML || "localhost:11211";
+            slab = document.getElementById("slab").innerHTML || 0;
+            key = document.getElementById("key").innerHTML || "";
+            const message = { type: 'syncData', data: { server, slab, key } };
+            vscode.postMessage(message);
+        };
+
+        function removeKey() {
+            server = document.getElementById("server").innerHTML || "localhost:11211";
+            slab = document.getElementById("slab").innerHTML || 0;
+            key = document.getElementById("key").innerHTML || "";
+            const message = { type: 'removeKey', data: { server, slab, key } };
+            vscode.postMessage(message);
+        };
+
+        window.addEventListener('message', (event) => {
+            const message = event.data;
+
+            if (message.type === 'syncData') {
+                var result = document.getElementById("result");
+                result.className = (message.result == 0 ? "success" : "failed");
+                result.innerText = (message.result == 0 ? "Sync Successed!" : "Sync Failed!");
+                document.getElementById("server").innerHTML = message.server;
+                document.getElementById("slab").innerHTML = message.slab;
+                document.getElementById("key").innerHTML = message.key;
+                document.getElementById("data").innerHTML = message.data;
+                // Respond back to the extension
+            } else if (message.type === 'removeKey'){
+
+            }
+        });
+    </script>
+    <style>
+        #data{
+            border: 1px solid #303030;
+            padding: 8px;
+        }
+        .success{
+            color:green;
+            margin: 16px 0px;
+        }
+        .failed{
+            color:red;
+            margin: 16px 0px;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>data on memcached server:</h1>
+    <h2><span id="slab"></span>/<span id="key"></span>@<span id="server"></span></h2>
+    <div id="data"></div>
+    <div id="result"></div>
+    <input id="sync" type="button" value="Sync Data" onclick="syncData()" />
+    <input id="del" type="button" value="Remove Key" onclick="removeKey()" /><br />
+</body>
+</html>

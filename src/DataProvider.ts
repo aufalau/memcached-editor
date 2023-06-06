@@ -2,8 +2,10 @@ import * as vscode from 'vscode';
 import * as fs from 'fs';
 import * as path from 'path';
 import { ServerItem, SlabItem, KeyItem, MemcachedItem } from './DataItem';
-import { SettingsView } from './SettingsView';
+import { MemcachedView } from './MemcachedView';
 import * as Memcached from 'memcached';
+import { Key } from 'readline';
+import { getMemcachedItem } from './Tools';
 
 export class DataProvider implements vscode.TreeDataProvider<MemcachedItem> {
     private _onDidChangeTreeData: vscode.EventEmitter<MemcachedItem | undefined | null | void> = new vscode.EventEmitter<MemcachedItem | undefined | null | void>();
@@ -42,9 +44,9 @@ export class DataProvider implements vscode.TreeDataProvider<MemcachedItem> {
 
     addServer(): void {
         vscode.window.showInformationMessage(`Successfully called addServer entry.`);
-        const webview = SettingsView.openView(this.context);
+        const [webview, create] = MemcachedView.openSettingsView(this.context);
         // vscode.window.createWebviewPanel()
-        webview.onDidReceiveMessage((message) => { this.onDidReceiveMessage(webview, message); });
+        if (create) { webview.onDidReceiveMessage((message) => { this.onSettingsViewMessage(webview, message); }); }
 
     }
 
@@ -63,27 +65,6 @@ export class DataProvider implements vscode.TreeDataProvider<MemcachedItem> {
         this._onDidChangeTreeData.fire();
     }
 
-    onDidReceiveMessage(webView: vscode.Webview, message: any): void {
-        if (message.type === "testConnection") {
-            SettingsView.testConnection(message.data.host, message.data.port, (result) => {
-                // webView.postMessage({type:"testConnection", result});
-                vscode.window.showInformationMessage(result === 0 ? 'Connection Successed!' : 'Connection Failed!');
-            });
-        } else if (message.type === "connectServer") {
-            if (this.serverList.find(elem => elem.label === `${message.data.host}:${message.data.port}`)) { return; }
-            SettingsView.connectServer(message.data.host, message.data.port, message.data.username, message.data.password, (result: number) => {
-                if (result >= 0) {
-                    vscode.window.showInformationMessage('Connection Successed!');
-                    this.serverList.push(new ServerItem(`${message.data.host}:${message.data.port}`, vscode.TreeItemCollapsibleState.Collapsed, undefined));
-                    this._onDidChangeTreeData.fire();
-                } else {
-                    vscode.window.showInformationMessage('Connection Failed!');
-                }
-            });
-
-        }
-    }
-
     onDidChangeSelection(evt: vscode.TreeViewSelectionChangeEvent<MemcachedItem>) {
         if (evt.selection.length > 0) {
             const treeItem = evt.selection[0]; // assumes a single selection
@@ -92,6 +73,44 @@ export class DataProvider implements vscode.TreeDataProvider<MemcachedItem> {
             if (command) {
                 vscode.commands.executeCommand(command.command, treeItem);
             }
+        }
+    }
+
+    onClickKeyItem(item: KeyItem) {
+
+        const [webview, create] = MemcachedView.openDataView(this.context);
+        if (create) { webview.onDidReceiveMessage((message) => { this.onDataViewMessage(webview, message); }); }
+
+        this.onDataViewMessage(webview, { type: 'syncData', data: { server:item.server, slab:item.slab, key:item.key } });
+    }
+
+    onSettingsViewMessage(webView: vscode.Webview, message: any): void {
+        if (message.type === "testConnection") {
+            MemcachedView.testConnection(message.data.host, message.data.port, (result) => {
+                // webView.postMessage({type:"testConnection", result});
+                vscode.window.showInformationMessage(result === 0 ? 'Connection Successed!' : 'Connection Failed!');
+            });
+        } else if (message.type === "connectServer") {
+            if (this.serverList.find(elem => elem.label === `${message.data.host}:${message.data.port}`)) { return; }
+            MemcachedView.connectServer(message.data.host, message.data.port, message.data.username, message.data.password, (result: number) => {
+                if (result >= 0) {
+                    vscode.window.showInformationMessage('Connection Successed!');
+                    this.serverList.push(new ServerItem(`${message.data.host}:${message.data.port}`, vscode.TreeItemCollapsibleState.Collapsed));
+                    this._onDidChangeTreeData.fire();
+                } else {
+                    vscode.window.showInformationMessage('Connection Failed!');
+                }
+            });
+        }
+    }
+
+    onDataViewMessage(webView: vscode.Webview, message: any): void {
+        if (message.type === "syncData") {
+            getMemcachedItem(message.data.server, message.data.slab, message.data.key).then((data)=>{
+                webView.postMessage({ type: "syncData", server: message.data.server, slab: message.data.slab, key: message.data.key, data: data, result: 0 });
+            }).catch((err)=>{
+                webView.postMessage({ type: "syncData", server: message.data.server, slab: message.data.slab, key: message.data.key, data: err, result: 1 });
+            });
         }
     }
 }
