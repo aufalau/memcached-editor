@@ -23,11 +23,9 @@ export function activate(context: vscode.ExtensionContext) {
 	vscode.commands.registerCommand('memcached.slab.filter', (element: SlabItem) => {
 		vscode.window.showInformationMessage(`Memcached.Slab.Filter ${element.label}`);
 	});
-	vscode.commands.registerCommand('memcached.slab.reload', (element: SlabItem) => {
-		vscode.window.showInformationMessage(`Memcached.Slab.Reload ${element?.label}`);
-	});
+	vscode.commands.registerCommand('memcached.slab.reload', (element: SlabItem) => memcachedProvider.refreshSlab(element));
 
-	vscode.commands.registerCommand('memcached.key.operator', (element: KeyItem) => memcachedProvider.onClickKeyItem(element));
+	vscode.commands.registerCommand('memcached.key.operator', (element: KeyItem) => memcachedProvider.openKey(element));
 }
 
 // This method is called when your extension is deactivated

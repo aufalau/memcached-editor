@@ -17,6 +17,7 @@ export async function getMemcachedSlabs(server: string): Promise<{ slabid: strin
     return new Promise((resolve, reject) => {
         var slabids: { slabid: string, count: number }[] = [];
         client.items((err, data) => {
+            client.end();
             if (err) {
                 console.error(err);
                 reject(err);
@@ -44,6 +45,7 @@ export async function getMemcachedItems(server: string, slabid: string, count: n
         var result: string[] = [];
 
         client.cachedump(server || "", Number(slabid), count, (e, v) => {
+            client.end();
             if (Array.isArray(v)) {
                 v.forEach(e => {
                     result.push(valueForKey(e, 'key'));
@@ -65,10 +67,30 @@ export async function getMemcachedItem(server: string, slabid: string, key: stri
 
     return new Promise((resolve, reject) => {
         client.get(key, (err:any, data:any)=>{
+            client.end();
             if(err){
                 reject(err);
             }else{
                 resolve(data);
+            }
+        });
+    });
+}
+
+export async function removeMemcachedItem(server: string, slabid: string, key: string) : Promise<boolean> {
+    const client = new Memcached(server, {
+        retries: 10,
+        retry: 10000,
+        remove: true
+    });
+
+    return new Promise((resolve, reject) => {
+        client.del(key, (err:any, result:boolean)=>{
+            client.end();
+            if(err){
+                reject(err);
+            }else{
+                resolve(result);
             }
         });
     });

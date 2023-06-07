@@ -60,7 +60,7 @@
       },{
         "command": "memcached.slab.filter",
         "title": "Filter Slab",
-        "icon": "$(refresh)",
+        "icon": "$(filter)",
         "category": "Memcached"
       },{
         "command": "memcached.slab.reload",

@@ -27,7 +27,13 @@
                 document.getElementById("result").innerHTML = `<div>${message.result == 0 ? "Connection Successed!" : "Connection Failed!"}</div>`;
                 // Respond back to the extension
             } else if (message.type === 'connectServer'){
-
+                document.getElementById("result").innerHTML = `<div>${message.result == 0 ? "Connection Successed!" : "Connection Failed!"}</div>`;
+            } else if (message.type === 'editConnection'){
+                document.getElementById("query").innerHTML = JSON.stringify(message.data);
+                document.getElementById("host").value = message.data.host; document.getElementById("host").readonly = true;
+                document.getElementById("port").value = message.data.port; document.getElementById("port").readonly = true;
+                document.getElementById("username").value = message.data.username;
+                document.getElementById("password").value = message.data.password;
             }
         });
     </script>
@@ -35,6 +41,7 @@
 
 <body>
     <h1>IP address of the memcached server:</h1>
+    <div id="query" style="display: none;"></div>
     <input id="host" type="text" placeholder="(optional) host" />
     <h1>Port of the memcached server:</h1>
     <input id="port" type="number" placeholder="(optional) port" />

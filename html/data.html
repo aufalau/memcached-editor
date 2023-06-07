@@ -28,21 +28,22 @@
                 var result = document.getElementById("result");
                 result.className = (message.result == 0 ? "success" : "failed");
                 result.innerText = (message.result == 0 ? "Sync Successed!" : "Sync Failed!");
-                document.getElementById("server").innerHTML = message.server;
-                document.getElementById("slab").innerHTML = message.slab;
-                document.getElementById("key").innerHTML = message.key;
+                document.getElementById("server").innerHTML = message.node.server;
+                document.getElementById("slab").innerHTML = message.node.slab;
+                document.getElementById("key").innerHTML = message.node.key;
                 document.getElementById("data").innerHTML = message.data;
                 // Respond back to the extension
             } else if (message.type === 'removeKey'){
-
+                var result = document.getElementById("result");
+                result.className = (message.result == 0 ? "success" : "failed");
+                result.innerText = (message.result == 0 ? "Remove Successed!" : `Remove Failed! ${message.data}`);
+                if(message == 0){
+                    document.getElementById("data").innerHTML = "NO DATA";
+                }
             }
         });
     </script>
     <style>
-        #data{
-            border: 1px solid #303030;
-            padding: 8px;
-        }
         .success{
             color:green;
             margin: 16px 0px;
@@ -51,13 +52,36 @@
             color:red;
             margin: 16px 0px;
         }
+        .node{
+            border: 1px solid #303030;
+        }
+
+        .node>div{
+            /* border: 1px solid #303030; */
+
+            display: table-cell;
+            vertical-align: middle;
+            padding: 20px;
+        }
+        .node>div:first-child{
+            width: 200px;
+            border-right: 1px solid #303030;
+        }
     </style>
 </head>
 
 <body>
     <h1>data on memcached server:</h1>
-    <h2><span id="slab"></span>/<span id="key"></span>@<span id="server"></span></h2>
-    <div id="data"></div>
+    <div class="node">
+        <div>
+            server:&nbsp;<span id="server"></span><br/>
+            slabid:&nbsp;<span id="slab"></span><br/>
+            key:&nbsp;<span id="key"></span><br/>
+        </div>
+        <div>
+            <div id="data"></div>
+        </div>
+    </div>
     <div id="result"></div>
     <input id="sync" type="button" value="Sync Data" onclick="syncData()" />
     <input id="del" type="button" value="Remove Key" onclick="removeKey()" /><br />

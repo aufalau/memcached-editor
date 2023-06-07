@@ -2,6 +2,7 @@ import * as vscode from 'vscode';
 import * as fs from 'fs';
 import * as path from 'path';
 import { getMemcachedItem, getMemcachedItems, getMemcachedSlabs } from './Tools';
+import { ConnectionConfig } from './config';
 
 export abstract class MemcachedItem extends vscode.TreeItem {
     // constructor(
@@ -24,19 +25,19 @@ export class ServerItem extends MemcachedItem {
         dark: path.join(__filename, '..', '..', 'resources', 'icon.svg')
     };
     get server():string{
-        return this.label;
+        return `${this.config.host}:${this.config.port}`;
     }
 
     constructor(
-        public label: string,
+        public config: ConnectionConfig,
         public collapsibleState: vscode.TreeItemCollapsibleState
     ) {
-        super(label, collapsibleState);
+        super(`${config.host}:${config.port}`, collapsibleState);
         this.tooltip = undefined;
         this.description = undefined;
     }
     async getChildren(): Promise<MemcachedItem[]> {
-        const items = await getMemcachedSlabs(this.label);
+        const items = await getMemcachedSlabs(this.server);
 
         var children: MemcachedItem[] = [];
         items.forEach(item => {
@@ -50,31 +51,33 @@ export class SlabItem extends MemcachedItem {
     contextValue = ItemType.itemSlab;
     iconPath = new vscode.ThemeIcon('database');
 
-    get server():string{
-        return this.parent.server;
+    get server():ServerItem{
+        return this.parent;
     }
 
-    get slab():string{
-        return this.label;
-    }
+    // get slab():string{
+    //     return this.slabid;
+    // }
 
     constructor(
-        public label: string,
+        public slab: string,
         public collapsibleState: vscode.TreeItemCollapsibleState,
         public parent: ServerItem,
         public childCount: number
     ) {
-        super(label, collapsibleState);
+        super(slab, collapsibleState);
         this.tooltip = undefined;
         this.description = undefined;
     }
     async getChildren(): Promise<MemcachedItem[]> {
-        const items = await getMemcachedItems(this.parent.label, this.label, this.childCount);
+        const items = await getMemcachedItems(this.parent.server, this.slab, this.childCount);
 
-        var children: MemcachedItem[] = [];
+        var children: KeyItem[] = [];
         items.forEach(item => {
             children.push(new KeyItem(item, vscode.TreeItemCollapsibleState.None, this ));
         });
+
+        children = children.sort((a, b)=>a.key>b.key?1:(a.key<b.key?-1:0));
         return children;
     }
 
@@ -100,24 +103,24 @@ export class KeyItem extends MemcachedItem {
         arguments: []
     };
 
-    get server():string{
+    get server():ServerItem{
         return this.parent.server;
     }
 
-    get slab():string{
-        return this.parent.slab;
+    get slab():SlabItem{
+        return this.parent;
     }
 
-    get key():string{
-        return this.label;
-    }
+    // get key():string{
+    //     return this.key;
+    // }
 
     constructor(
-        public label: string,
+        public key: string,
         public collapsibleState: vscode.TreeItemCollapsibleState,
         public parent: SlabItem
     ) {
-        super(label, collapsibleState);
+        super(key, collapsibleState);
 
         this.tooltip = undefined;
         this.description = undefined;
