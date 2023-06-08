@@ -7,6 +7,7 @@ import * as Memcached from 'memcached';
 import { Key } from 'readline';
 import { getMemcachedItem, removeMemcachedItem } from './Tools';
 import ConnectionConfigStore from './config';
+import { memoryUsage } from 'process';
 
 export class DataProvider implements vscode.TreeDataProvider<MemcachedItem> {
     private _onDidChangeTreeData: vscode.EventEmitter<MemcachedItem | undefined | null | void> = new vscode.EventEmitter<MemcachedItem | undefined | null | void>();
@@ -70,8 +71,21 @@ export class DataProvider implements vscode.TreeDataProvider<MemcachedItem> {
         this.refresh();
     }
 
-    openKey(item: KeyItem) {
+    openServer(item: ServerItem) {
+        const [webview, create] = MemcachedView.openDataView(this.context);
+        if (create) { webview.onDidReceiveMessage((message) => { this.onDataViewMessage(webview, message); }); }
 
+        this.onDataViewMessage(webview, { type: 'syncServer', data: { server: item.server } });
+    }
+
+    openSlab(item: SlabItem) {
+        const [webview, create] = MemcachedView.openDataView(this.context);
+        if (create) { webview.onDidReceiveMessage((message) => { this.onDataViewMessage(webview, message); }); }
+
+        this.onDataViewMessage(webview, { type: 'syncSlab', data: { server: item.server.server, slab: item.slab } });
+    }
+
+    openKey(item: KeyItem) {
         const [webview, create] = MemcachedView.openDataView(this.context);
         if (create) { webview.onDidReceiveMessage((message) => { this.onDataViewMessage(webview, message); }); }
 
@@ -97,7 +111,7 @@ export class DataProvider implements vscode.TreeDataProvider<MemcachedItem> {
                 vscode.window.showInformationMessage(result === 0 ? 'Connection Successed!' : 'Connection Failed!');
             });
         } else if (message.type === "connectServer") {
-            if (this.serverList.find(elem => elem.label === `${message.data.host}:${message.data.port}`)) { return; }
+            if (this.serverList.find(elem => elem.server === `${message.data.host}:${message.data.port}`)) { return; }
             MemcachedView.connectServer(message.data.host, message.data.port, message.data.username, message.data.password, (result: number) => {
                 if (result >= 0) {
                     vscode.window.showInformationMessage('Connection Successed!');
@@ -111,7 +125,30 @@ export class DataProvider implements vscode.TreeDataProvider<MemcachedItem> {
     }
 
     onDataViewMessage(webview: vscode.Webview, message: any): void {
-        if (message.type === "syncData") {
+        if (message.type === "syncServer") {
+            const server = this.serverList.find((v, idx, obj)=>v.server === message.data.server);
+            server?.getChildren().then(children=>{
+                const slabs:string[] = children.map((child) => (child as SlabItem).slab);
+                webview.postMessage({ type: "syncServer", node: { server: message.data.server}, data: slabs, result: 0 });
+            }).catch(e=>{
+                webview.postMessage({ type: "syncServer", node: { server: message.data.server}, data: [], result: 1 });
+            });
+        }
+        else if (message.type === "syncSlab") {
+            const server = this.serverList.find((v, idx, obj)=>v.server === message.data.server);
+            server?.getChildren().then(children=>{
+                const child = children.find((s, idx, obj)=>(s as SlabItem).slab === message.data.slab) as SlabItem;
+                child?.getChildren().then(values=>{
+                    const keys: string[] = values.map((k)=>(k as KeyItem).key);
+                    webview.postMessage({ type: "syncSlab", node: { server: message.data.server, slab: message.data.slab}, data: keys, result: 0 });
+                }).catch(e=>{
+                    webview.postMessage({ type: "syncSlab", node: { server: message.data.server, slab: message.data.slab}, data: [], result: 1 });
+                });
+            }).catch(e=>{
+                webview.postMessage({ type: "syncSlab", node: { server: message.data.server, slab: message.data.slab}, data: [], result: 1 });
+            });
+        }
+        else if (message.type === "syncData") {
             getMemcachedItem(message.data.server.name, message.data.slab.name, message.data.key).then((data) => {
                 webview.postMessage({ type: "syncData", node: { server: message.data.server, slab: message.data.slab, key: message.data.key }, data: data, result: 0 });
             }).catch((err) => {

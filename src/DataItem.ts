@@ -24,6 +24,14 @@ export class ServerItem extends MemcachedItem {
         light: path.join(__filename, '..', '..', 'resources', 'icon.svg'),
         dark: path.join(__filename, '..', '..', 'resources', 'icon.svg')
     };
+
+    command: vscode.Command = {
+        title: 'View',
+        tooltip: 'Click',
+        command: 'memcached.server.operator',
+        arguments: []
+    };
+
     get server():string{
         return `${this.config.host}:${this.config.port}`;
     }
@@ -50,6 +58,13 @@ export class ServerItem extends MemcachedItem {
 export class SlabItem extends MemcachedItem {
     contextValue = ItemType.itemSlab;
     iconPath = new vscode.ThemeIcon('database');
+
+    command: vscode.Command = {
+        title: 'View',
+        tooltip: 'Click',
+        command: 'memcached.slab.operator',
+        arguments: []
+    };
 
     get server():ServerItem{
         return this.parent;

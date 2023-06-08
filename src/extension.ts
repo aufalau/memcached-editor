@@ -25,6 +25,8 @@ export function activate(context: vscode.ExtensionContext) {
 	});
 	vscode.commands.registerCommand('memcached.slab.reload', (element: SlabItem) => memcachedProvider.refreshSlab(element));
 
+	vscode.commands.registerCommand('memcached.server.operator', (element: ServerItem) => memcachedProvider.openServer(element));
+	vscode.commands.registerCommand('memcached.slab.operator', (element: SlabItem) => memcachedProvider.openSlab(element));
 	vscode.commands.registerCommand('memcached.key.operator', (element: KeyItem) => memcachedProvider.openKey(element));
 }
 

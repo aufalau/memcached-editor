@@ -68,6 +68,12 @@
         "icon": "$(refresh)",
         "category": "Memcached"
       },{
+        "command": "memcached.server.operator",
+        "title":"Open Server"
+      },{
+        "command": "memcached.slab.operator",
+        "title":"Open Slab"
+      },{
         "command": "memcached.key.operator",
         "title":"Open Item"
       }
