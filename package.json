@@ -3,10 +3,12 @@
   "displayName": "Memcached Viewer",
   "description": "",
   "version": "0.0.1",
+  "publisher": "AufaLau",
   "engines": {
     "vscode": "^1.78.0"
   },
   "categories": [
+    "Visualization",
     "Other"
   ],
   "activationEvents": [],
@@ -161,6 +163,18 @@
     "lint": "eslint src --ext ts",
     "test": "node ./out/test/runTest.js"
   },
+  "keywords": [
+    "memcached",
+    "memcached viewer",
+    "memcached gui",
+    "terminal",
+    "manager"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://gitee.com/aufalau/memcached-viewer"
+  },
+  "icon": "resources/logo.png",
   "devDependencies": {
     "@types/glob": "^8.1.0",
     "@types/mocha": "^10.0.1",

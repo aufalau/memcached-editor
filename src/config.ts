@@ -2,7 +2,7 @@ import { ExtensionContext } from 'vscode';
 export enum Constant {
     GLOBAL_STATE_MEMCACHED_CONFIG_KEY = 'vscode-memcached-connection-config',
     GLOBAL_STATE_WELCOME_KEY = 'welcome-timestamp',
-    GITEE_REPO = 'https://gitee.com/aufalau/memcached-viewer.git'
+    GITEE_REPO = 'https://gitee.com/aufalau/memcached-viewer'
 }
 
 export class ConnectionConfig {
