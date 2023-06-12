@@ -16,6 +16,7 @@ export abstract class MemcachedItem extends vscode.TreeItem {
     // }
 
     abstract getChildren(): Promise<MemcachedItem[]>;
+    abstract getParent(): MemcachedItem | null;
 }
 
 export class ServerItem extends MemcachedItem {
@@ -32,7 +33,17 @@ export class ServerItem extends MemcachedItem {
         arguments: []
     };
 
-    get server():string{
+    children: SlabItem[] = [];
+
+    get host(): string{
+        return this.config.host;
+    }
+
+    get port(): string{
+        return this.config.port;
+    }
+
+    get server(): string {
         return `${this.config.host}:${this.config.port}`;
     }
 
@@ -44,14 +55,25 @@ export class ServerItem extends MemcachedItem {
         this.tooltip = undefined;
         this.description = undefined;
     }
-    async getChildren(): Promise<MemcachedItem[]> {
+
+    findChild(label: string): SlabItem | undefined {
+        return this.children.find((v, idx, arr) => v.label === label);
+    }
+
+    async getChildren(): Promise<SlabItem[]> {
         const items = await getMemcachedSlabs(this.server);
 
-        var children: MemcachedItem[] = [];
+        this.children = [];
         items.forEach(item => {
-            children.push(new SlabItem(item.slabid, vscode.TreeItemCollapsibleState.Collapsed, this, item.count));
+            this.children.push(new SlabItem(item.slabid, vscode.TreeItemCollapsibleState.Collapsed, this, item.count));
         });
-        return children;
+
+        console.log(this.children);
+        return this.children;
+    }
+
+    getParent(): MemcachedItem | null {
+        return null;
     }
 }
 
@@ -66,13 +88,11 @@ export class SlabItem extends MemcachedItem {
         arguments: []
     };
 
-    get server():ServerItem{
-        return this.parent;
-    }
+    children: KeyItem[] = [];
 
-    // get slab():string{
-    //     return this.slabid;
-    // }
+    get server(): string {
+        return this.parent.server;
+    }
 
     constructor(
         public slab: string,
@@ -84,27 +104,29 @@ export class SlabItem extends MemcachedItem {
         this.tooltip = undefined;
         this.description = undefined;
     }
-    async getChildren(): Promise<MemcachedItem[]> {
-        const items = await getMemcachedItems(this.parent.server, this.slab, this.childCount);
 
-        var children: KeyItem[] = [];
-        items.forEach(item => {
-            children.push(new KeyItem(item, vscode.TreeItemCollapsibleState.None, this ));
-        });
-
-        children = children.sort((a, b)=>a.key>b.key?1:(a.key<b.key?-1:0));
-        return children;
+    findChild(label: string): KeyItem | undefined {
+        return this.children.find((v, idx, arr) => v.label === label);
     }
 
-    // onKeys(key: string) {
-    //     if (!this.children) {
-    //         this.children = [];
-    //     }
-    //     const child = this.children.find(c => c.label === key);
-    //     if (!child) {
-    //         this.children.push(new KeyItem(key, vscode.TreeItemCollapsibleState.None, undefined));
-    //     }
-    // }
+    async getChildren(): Promise<KeyItem[]> {
+        const items = await getMemcachedItems(this.parent.server, this.slab, this.childCount);
+
+        this.children = [];
+        items.forEach(item => {
+            this.children.push(new KeyItem(item, vscode.TreeItemCollapsibleState.None, this));
+        });
+
+        this.children = this.children.sort((a, b) => a.key > b.key ? 1 : (a.key < b.key ? -1 : 0));
+
+        console.log(this.children);
+        
+        return this.children;
+    }
+
+    getParent(): MemcachedItem | null {
+        return this.parent;
+    }
 }
 
 export class KeyItem extends MemcachedItem {
@@ -118,17 +140,13 @@ export class KeyItem extends MemcachedItem {
         arguments: []
     };
 
-    get server():ServerItem{
+    get server(): string {
         return this.parent.server;
     }
 
-    get slab():SlabItem{
-        return this.parent;
+    get slab(): string {
+        return this.parent.slab;
     }
-
-    // get key():string{
-    //     return this.key;
-    // }
 
     constructor(
         public key: string,
@@ -140,8 +158,13 @@ export class KeyItem extends MemcachedItem {
         this.tooltip = undefined;
         this.description = undefined;
     }
+
     async getChildren(): Promise<MemcachedItem[]> {
         return [];
+    }
+
+    getParent(): MemcachedItem | null {
+        return this.parent;
     }
 }
 

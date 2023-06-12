@@ -44,7 +44,7 @@ export async function getMemcachedItems(server: string, slabid: string, count: n
     return new Promise((resolve, reject) => {
         var result: string[] = [];
 
-        client.cachedump(server || "", Number(slabid), count, (e, v) => {
+        client.cachedump(server || "", Number(slabid), 0, (e, v) => {
             client.end();
             if (Array.isArray(v)) {
                 v.forEach(e => {

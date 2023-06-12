@@ -1,54 +1,49 @@
 <html>
-
 <head>
     <title>Memcached - New Connection Settings</title>
     <script>
         const vscode = acquireVsCodeApi();
         function openSlab(server, slab){
-            const message = { type: 'syncSlab', data: { server, slab } };
+            const message = { type: 'pickItem', data: { server, slab } };
             vscode.postMessage(message);
         }
 
         function openData(server, slab, key){
+            const message = { type: 'pickItem', data: { server, slab, key } };
+            vscode.postMessage(message);
+        }
+
+        function syncData(server, slab, key) {
+            server = document.getElementById("server").innerHTML || "localhost:11211";
+            slab = document.getElementById("slabid").innerHTML || 0;
+            key = document.getElementById("key").innerHTML || "";
             const message = { type: 'syncData', data: { server, slab, key } };
             vscode.postMessage(message);
         }
 
-        function syncData() {
-            server = document.getElementById("server").innerHTML || "localhost:11211";
-            slab = document.getElementById("slab").innerHTML || 0;
-            key = document.getElementById("key").innerHTML || "";
-            const message = { type: 'syncData', data: { server, slab, key } };
-            vscode.postMessage(message);
-            console.log(message);
-        };
-
         function removeKey() {
             server = document.getElementById("server").innerHTML || "localhost:11211";
-            slab = document.getElementById("slab").innerHTML || 0;
+            slab = document.getElementById("slabid").innerHTML || 0;
             key = document.getElementById("key").innerHTML || "";
             const message = { type: 'removeKey', data: { server, slab, key } };
             vscode.postMessage(message);
-        };
-
+        }
+        
         window.addEventListener('message', (event) => {
             const message = event.data;
             if (message.type === 'syncServer') {
                 document.getElementById("title").innerHTML = "slabs on memcached server";
-                document.getElementById("node").innerHTML = `<div>server:&nbsp;<span id="server">${message.node.server}</span></div>`;
-                document.getElementById("data").innerHTML = message.data.map(slab=>`<a href="javascript:void(0);" onclick="openSlab(${message.node.server}, ${slab})">${slab}</a>&nbsp;`);
+                document.getElementById("node").innerHTML = `<div>server:&nbsp;<span id="server">${message.node.server}</span></div><div>slab count:&nbsp<span>${message.data.length}</span></div>`;
+                document.getElementById("data").innerHTML = message.data.map(slab=>`<a href="javascript:void(0);" onclick="openSlab('${message.node.server}', '${slab}')">${slab}</a>&nbsp;`);
                 document.getElementById("result").innerHTML = "";
-
                 document.getElementById("sync").style.display = "none";
                 document.getElementById("del").style.display = "none";
-
             }
             else if (message.type === 'syncSlab') {
                 document.getElementById("title").innerHTML = "items on memcached server";
-                document.getElementById("node").innerHTML = `<div>server:&nbsp;<span id="server">${message.node.server}</span></div><div>slabid:&nbsp<span id="slabid">${message.node.slab}</span></div>`;
-                document.getElementById("data").innerHTML = message.data.map(key=>`<a href="javascript:void(0);" onclick="openData(${message.node.server}, ${message.node.slab}, ${key})">${key}</a>&nbsp;`);;
+                document.getElementById("node").innerHTML = `<div>server:&nbsp;<span id="server">${message.node.server}</span></div><div>slabid:&nbsp<span id="slabid">${message.node.slab}</span></div><div>item count:&nbsp<span>${message.data.length}</span></div>`;
+                document.getElementById("data").innerHTML = message.data.map(key=>`<a href="javascript:void(0);" onclick="openData('${message.node.server}', '${message.node.slab}', '${key}')">${key}</a>&nbsp;`);;
                 document.getElementById("result").innerHTML = "";
-
                 document.getElementById("sync").style.display = "none";
                 document.getElementById("del").style.display = "none";
             }
@@ -59,10 +54,8 @@
                 result.innerText = (message.result == 0 ? "Sync Successed!" : "Sync Failed!");
                 document.getElementById("node").innerHTML = `<div>server:&nbsp;<span id="server">${message.node.server}</span></div><div>slabid:&nbsp<span id="slabid">${message.node.slab}</span></div><div>key:&nbsp;<span id="key">${message.node.key}</span></div>`;
                 document.getElementById("data").innerHTML = message.data;
-
                 document.getElementById("sync").style.display = "";
                 document.getElementById("del").style.display = "";
-                // Respond back to the extension
             } else if (message.type === 'removeKey') {
                 var result = document.getElementById("result");
                 result.className = (message.result == 0 ? "success" : "failed");
@@ -71,7 +64,6 @@
                     document.getElementById("node").innerHTML = "";
                     document.getElementById("data").innerHTML = "NO DATA";
                 }
-
                 document.getElementById("sync").style.display = "";
                 document.getElementById("del").style.display = "";
             }
@@ -103,6 +95,11 @@
         .node>div:first-child {
             width: 200px;
             border-right: 1px solid #303030;
+        }
+
+        #data{
+            word-wrap: break-word;
+            word-break: break-all;
         }
     </style>
 </head>

@@ -42,40 +42,60 @@
         "title": "Add Server",
         "icon": "$(add)",
         "category": "Memcached"
-      },{
+      },
+      {
+        "command": "memcached.repo.git",
+        "title": "Git Repository",
+        "icon": "$(github)",
+        "category": "Memcached"
+      },
+      {
+        "command": "memcached.server.terminal",
+        "title": "Open Terminal",
+        "icon": "$(terminal)",
+        "category": "Memcached"
+      },
+      {
         "command": "memcached.server.reload",
         "title": "Reload Server",
         "icon": "$(refresh)",
         "category": "Memcached"
-      },{
+      },
+      {
         "command": "memcached.server.edit",
         "title": "Edit Settings",
         "icon": "$(edit)",
         "category": "Memcached"
-      },{
+      },
+      {
         "command": "memcached.server.delete",
         "title": "Delete Server",
         "icon": "$(trashcan)",
         "category": "Memcached"
-      },{
+      },
+      {
         "command": "memcached.slab.filter",
         "title": "Filter Slab",
         "icon": "$(filter)",
         "category": "Memcached"
-      },{
+      },
+      {
         "command": "memcached.slab.reload",
         "title": "Reload Slab",
         "icon": "$(refresh)",
         "category": "Memcached"
-      },{
+      },
+      {
         "command": "memcached.server.operator",
-        "title":"Open Server"
-      },{
+        "title": "Open Server"
+      },
+      {
         "command": "memcached.slab.operator",
-        "title":"Open Slab"
-      },{
+        "title": "Open Slab"
+      },
+      {
         "command": "memcached.key.operator",
-        "title":"Open Item"
+        "title": "Open Item"
       }
     ],
     "menus": {
@@ -83,39 +103,49 @@
         {
           "command": "memcached.list.add",
           "when": "view == memcached-list",
-          "group": "navigation"
+          "group": "navigation@2"
         },
         {
           "command": "memcached.list.refresh",
           "when": "view == memcached-list",
-          "group": "navigation"
+          "group": "navigation@3"
+        },
+        {
+          "command": "memcached.repo.git",
+          "when": "view == memcached-list",
+          "group": "navigation@1"
         }
       ],
       "view/item/context": [
         {
+          "command": "memcached.server.terminal",
+          "when": "viewItem == server",
+          "group": "inline@1"
+        },
+        {
           "command": "memcached.server.reload",
           "when": "viewItem == server",
-          "group": "inline"
+          "group": "inline@4"
         },
         {
           "command": "memcached.server.edit",
           "when": "viewItem == server",
-          "group": "inline"
+          "group": "inline@2"
         },
         {
           "command": "memcached.server.delete",
           "when": "viewItem == server",
-          "group": "inline"
+          "group": "inline@3"
         },
         {
           "command": "memcached.slab.filter",
           "when": "viewItem == slab",
-          "group": "inline"
+          "group": "inline@1"
         },
         {
           "command": "memcached.slab.reload",
           "when": "viewItem == slab",
-          "group": "inline"
+          "group": "inline@2"
         }
       ]
     }

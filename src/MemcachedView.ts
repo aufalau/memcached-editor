@@ -31,7 +31,6 @@ export namespace MemcachedView {
             remove: true
           });
           
-          // Test connection to Memcached server
           client.stats((err, data) => {
             if (err) {
               console.error(err);
@@ -40,38 +39,7 @@ export namespace MemcachedView {
             }
 
             if (onResult) { onResult(data.length); }
-            // console.log(data);
           });
-
-          // client.slabs((err, data) => {
-          //   if (err) {
-          //     console.error(err);
-          //     if (onResult) { onResult(-1); }
-          //     return;
-          //   }
-          //   // console.log(data);
-          // });
-
-          // client.items((err, data) => {
-          //   if (err) {
-          //     console.error(err);
-          //     if (onResult) { onResult(-1); }
-          //     return;
-          //   }
-          //   data.forEach(element => {
-          //       var key = Object.keys(element)[0];
-          //       // var number = valueForKey(element[key], 'number');
-
-          //       if (onResult) { onResult(Number(key)); }
-          //       // client.cachedump(element.server || "", Number(key), val, (e, v)=>{
-          //       //     console.log(`${e}, ${v}`);
-          //       // });
-          //   });
-
-            //console.log(data);
-          // });
-
-        // console.log(`${host}:${port}${username}${password}`);
     }
 
     var settingView: vscode.WebviewPanel | undefined;
