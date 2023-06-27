@@ -5,7 +5,7 @@ import { ServerItem, SlabItem, KeyItem, MemcachedItem } from './DataItem';
 import { MemcachedView } from './MemcachedView';
 import * as Memcached from 'memcached';
 import { Key } from 'readline';
-import { getMemcachedItem, getMemcachedItems, getMemcachedSlabs, removeMemcachedItem } from './Tools';
+import { getMemcachedItem, getMemcachedItems, getMemcachedSlabs, removeMemcachedItem, setMemcachedItem } from './Tools';
 import { ConnectionConfig, ConnectionConfigStore } from './config';
 import { memoryUsage } from 'process';
 import { Server } from 'http';
@@ -124,6 +124,14 @@ export class DataProvider implements vscode.TreeDataProvider<MemcachedItem> {
         this.onDataViewMessage(webview, { type: 'syncData', data: { server: item.server, slab: item.slab, key: item.key } });
     }
 
+    removeKey(item: KeyItem | undefined) {
+        if (!item) { return; }
+        const [webview, create] = MemcachedView.openDataView(this.context);
+        if (create) { webview.onDidReceiveMessage((message) => { this.onDataViewMessage(webview, message); }); }
+
+        this.onDataViewMessage(webview, { type: 'removeKey', data: { server: item.server, slab: item.slab, key: item.key } });
+    }
+
     onDidChangeSelection(evt: vscode.TreeViewSelectionChangeEvent<MemcachedItem>) {
         if (evt.selection.length > 0) {
             const treeItem = evt.selection[0]; // assumes a single selection
@@ -180,19 +188,39 @@ export class DataProvider implements vscode.TreeDataProvider<MemcachedItem> {
             });
         }
         else if (message.type === "syncData") {
-            getMemcachedItem(message.data.server.name, message.data.slab.name, message.data.key).then((data) => {
+            getMemcachedItem(message.data.server, message.data.key).then((data) => {
                 webview.postMessage({ type: "syncData", node: { server: message.data.server, slab: message.data.slab, key: message.data.key }, data: data, result: 0 });
             }).catch((err) => {
                 webview.postMessage({ type: "syncData", node: { server: message.data.server, slab: message.data.slab, key: message.data.key }, data: err, result: 1 });
             });
-        } else if (message.type === "removeKey") {
-            removeMemcachedItem(message.data.server.name, message.data.slab.name, message.data.key).then((data) => {
-                setTimeout(()=>{
+        }
+        else if (message.type === "removeKey") {
+            removeMemcachedItem(message.data.server, message.data.key).then((data) => {
+                setTimeout(() => {
                     webview.postMessage({ type: "removeKey", node: { server: message.data.server, slab: message.data.slab, key: message.data.key }, data: data, result: data ? 0 : 1 });
                     if (data) { this.refresh(); }
                 }, 1000);
             }).catch((err) => {
                 webview.postMessage({ type: "removeKey", node: { server: message.data.server, slab: message.data.slab, key: message.data.key }, data: err, result: 1 });
+            });
+        }
+        else if (message.type === "setKey") {
+            setMemcachedItem(message.data.server, message.data.key, message.data.value, 0).then((data) => {
+                setTimeout(() => {
+                    webview.postMessage({ type: "setKey", node: { server: message.data.server, slab: message.data.slab, key: message.data.key }, data: data, result: data ? 0 : 1 });
+                    if (data) { this.refresh(); }
+                }, 1000);
+            }).catch((err) => {
+                webview.postMessage({ type: "setKey", node: { server: message.data.server, slab: message.data.slab, key: message.data.key }, data: err, result: 1 });
+            });
+        }
+        else if (message.type === "searchKey") {
+            var slab: string = "-1";
+            this.serverList.forEach(s => s.children.forEach(l => { if (l.findChild(message.data.key)) { slab = l.slab; } }));
+            getMemcachedItem(message.data.server, message.data.key).then((data) => {
+                webview.postMessage({ type: "syncData", node: { server: message.data.server, slab, key: message.data.key }, data: data, result: 0 });
+            }).catch((err) => {
+                webview.postMessage({ type: "syncData", node: { server: message.data.server, slab, key: message.data.key }, data: err, result: 1 });
             });
         }
     }

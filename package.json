@@ -2,7 +2,7 @@
   "name": "memcached-viewer",
   "displayName": "Memcached Viewer",
   "description": "",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "publisher": "AufaLau",
   "engines": {
     "vscode": "^1.78.0"
@@ -98,6 +98,12 @@
       {
         "command": "memcached.key.operator",
         "title": "Open Item"
+      },
+      {
+        "command": "memcached.key.remove",
+        "title": "Remove Item",
+        "icon": "$(trashcan)",
+        "category": "Memcached"
       }
     ],
     "menus": {
@@ -148,6 +154,11 @@
           "command": "memcached.slab.reload",
           "when": "viewItem == slab",
           "group": "inline@2"
+        },
+        {
+          "command": "memcached.key.remove",
+          "when": "viewItem == key",
+          "group": "inline@1"
         }
       ]
     }

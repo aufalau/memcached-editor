@@ -20,6 +20,7 @@ export function activate(context: vscode.ExtensionContext) {
 	vscode.commands.registerCommand('memcached.list.add', () => provider.addServer());
 	vscode.commands.registerCommand('memcached.list.refresh', () => provider.refresh());
 
+	vscode.commands.registerCommand('memcached.server.operator', (element: ServerItem) => provider.openServer(element));
 	vscode.commands.registerCommand('memcached.server.terminal', (element: ServerItem) => terminal.show(element));
 	vscode.commands.registerCommand('memcached.server.reload', (element: ServerItem) => provider.refreshServer(element));
 	vscode.commands.registerCommand('memcached.server.edit', (element: ServerItem) => provider.editServer(element));
@@ -29,14 +30,14 @@ export function activate(context: vscode.ExtensionContext) {
         vscode.env.openExternal(url);
 	});
 
+	vscode.commands.registerCommand('memcached.slab.operator', (element: SlabItem) => provider.openSlab(element));
 	vscode.commands.registerCommand('memcached.slab.filter', (element: SlabItem) => {
 		vscode.window.showInformationMessage(`Memcached.Slab.Filter ${element.label}`);
 	});
 	vscode.commands.registerCommand('memcached.slab.reload', (element: SlabItem) => provider.refreshSlab(element));
 
-	vscode.commands.registerCommand('memcached.server.operator', (element: ServerItem) => provider.openServer(element));
-	vscode.commands.registerCommand('memcached.slab.operator', (element: SlabItem) => provider.openSlab(element));
 	vscode.commands.registerCommand('memcached.key.operator', (element: KeyItem) => provider.openKey(element));
+	vscode.commands.registerCommand('memcached.key.remove', (element: KeyItem) => provider.removeKey(element));
 }
 
 // This method is called when your extension is deactivated

@@ -1,71 +1,41 @@
-# memcached-viewer README
+# Memcached Viewer for Visual Studio Code
 
-This is the README for your extension "memcached-viewer". After writing up a brief description, we recommend including the following sections.
+<!-- [![Build status](https://dev.azure.com/pikadun/vscode-redis/_apis/build/status/vscode-redis-build)](https://dev.azure.com/pikadun/vscode-redis/_build?definitionId=6)
+[![installs](https://vsmarketplacebadge.apphb.com/installs-short/Dunn.redis.svg)](https://marketplace.visualstudio.com/items?itemName=Dunn.redis)
+[![rating](https://vsmarketplacebadge.apphb.com/rating-star/Dunn.redis.svg)](https://marketplace.visualstudio.com/items?itemName=Dunn.redis)
+[![star](https://img.shields.io/github/stars/pikadun/vscode-redis)](https://github.com/pikadun/vscode-redis) -->
 
-## Features
+Welcome to the memcached-viewer extension for Visual Studio Code!
 
-Describe specific features of your extension including screenshots of your extension in action. Image paths are relative to this README file.
+This extension lets you connect to a memcached Server and view data.
 
-For example if there is an image subfolder under your extension project workspace:
+## Feature
 
-\!\[feature X\]\(images/feature-x.png\)
++ 💻An easy-to-use GUI to access your memcached data.
++ 🎹Execute the memcached commands through the terminal in vscode.
 
-> Tip: Many popular extensions utilize animations. This is an excellent way to show off your extension! We recommend short, focused animations that are easy to follow.
+## Usage
 
-## Requirements
+### Installation
 
-If you have any requirements or dependencies, add a section describing those and how to install and configure them.
++ In Visual Studio Code, select **View** > **Command Palette**, or press **Ctrl+Shift+P**, or press **F1** to open the **Command Palette**.
++ In the **Command Palette**, select **Extensions: Install Extensions** from the dropdown.
++ In the **Extensions** pane, type *Dunn.redis*.
++ Select the **Memcached** extension, and then select Install.
++ After the installation completes, select Reload to enable the extension.
 
-## Extension Settings
+### You can add a memcached connection by follow steps
 
-Include if your extension adds any VS Code settings through the `contributes.configuration` extension point.
+![Settings]
++ Press Memcached Viewer Icon on activityBar 
++ Click Add button on Title bar
++ Enter server settings
++ Click Test to check avaliable
++ Click OK to connect
 
-For example:
+### Open a terminal to use telnet
 
-This extension contributes the following settings:
-
-* `myExtension.enable`: Enable/disable this extension.
-* `myExtension.thing`: Set to `blah` to do something.
-
-## Known Issues
-
-Calling out known issues can help limit users opening duplicate issues against your extension.
-
-## Release Notes
-
-Users appreciate release notes as you update your extension.
-
-### 1.0.0
-
-Initial release of ...
-
-### 1.0.1
-
-Fixed issue #.
-
-### 1.1.0
-
-Added features X, Y, and Z.
-
----
-
-## Following extension guidelines
-
-Ensure that you've read through the extensions guidelines and follow the best practices for creating your extension.
-
-* [Extension Guidelines](https://code.visualstudio.com/api/references/extension-guidelines)
-
-## Working with Markdown
-
-You can author your README using Visual Studio Code. Here are some useful editor keyboard shortcuts:
-
-* Split the editor (`Cmd+\` on macOS or `Ctrl+\` on Windows and Linux).
-* Toggle preview (`Shift+Cmd+V` on macOS or `Shift+Ctrl+V` on Windows and Linux).
-* Press `Ctrl+Space` (Windows, Linux, macOS) to see a list of Markdown snippets.
-
-## For more information
-
-* [Visual Studio Code's Markdown Support](http://code.visualstudio.com/docs/languages/markdown)
-* [Markdown Syntax Reference](https://help.github.com/articles/markdown-basics/)
-
-**Enjoy!**
+![Terminal]
++ Press Memcached Viewer Icon on activityBar 
++ Click Terminal button on Title bar
++ type memcached commands here

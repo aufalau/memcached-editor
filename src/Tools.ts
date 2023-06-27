@@ -50,7 +50,7 @@ export async function getMemcachedItems(server: string, slabid: string, count: n
                 v.forEach(e => {
                     result.push(valueForKey(e, 'key'));
                 });
-            } else if(v){
+            } else if (v) {
                 result.push(valueForKey(v, 'key'));
             }
             resolve(result);
@@ -58,7 +58,7 @@ export async function getMemcachedItems(server: string, slabid: string, count: n
     });
 }
 
-export async function getMemcachedItem(server: string, slabid: string, key: string): Promise<string>{
+export async function getMemcachedItem(server: string, key: string): Promise<string> {
     const client = new Memcached(server, {
         retries: 10,
         retry: 10000,
@@ -66,18 +66,18 @@ export async function getMemcachedItem(server: string, slabid: string, key: stri
     });
 
     return new Promise((resolve, reject) => {
-        client.get(key, (err:any, data:any)=>{
+        client.get(key, (err: any, data: any) => {
             client.end();
-            if(err){
+            if (err) {
                 reject(err);
-            }else{
+            } else {
                 resolve(data);
             }
         });
     });
 }
 
-export async function removeMemcachedItem(server: string, slabid: string, key: string) : Promise<boolean> {
+export async function removeMemcachedItem(server: string, key: string): Promise<boolean> {
     const client = new Memcached(server, {
         retries: 10,
         retry: 10000,
@@ -85,11 +85,30 @@ export async function removeMemcachedItem(server: string, slabid: string, key: s
     });
 
     return new Promise((resolve, reject) => {
-        client.del(key, (err:any, result:boolean)=>{
+        client.del(key, (err: any, result: boolean) => {
             client.end();
-            if(err){
+            if (err) {
                 reject(err);
-            }else{
+            } else {
+                resolve(result);
+            }
+        });
+    });
+}
+
+export async function setMemcachedItem(server: string, key: string, value: string, lifetime: number): Promise<boolean> {
+    const client = new Memcached(server, {
+        retries: 10,
+        retry: 10000,
+        remove: true
+    });
+
+    return new Promise((resolve, reject) => {
+        client.set(key, value, lifetime, (err: any, result: boolean) => {
+            client.end();
+            if (err) {
+                reject(err);
+            } else {
                 resolve(result);
             }
         });

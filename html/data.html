@@ -13,7 +13,14 @@
             vscode.postMessage(message);
         }
 
-        function syncData(server, slab, key) {
+        function searchKey(){
+            server = document.getElementById("server").innerHTML || "localhost:11211";
+            key = document.getElementById("item").value || "";
+            const message = { type: 'searchKey', data: { server, key } };
+            vscode.postMessage(message);
+        }
+
+        function syncData() {
             server = document.getElementById("server").innerHTML || "localhost:11211";
             slab = document.getElementById("slabid").innerHTML || 0;
             key = document.getElementById("key").innerHTML || "";
@@ -106,6 +113,11 @@
 
 <body>
     <h1 id="title"></h1>
+    <div>
+        <input id="item" type="text" placeholder="please input key"/>
+        <input id="search" type="button" value="Search" onclick="searchKey()" />
+    </div>
+    <h2></h2>
     <div class="node">
         <div id="node">
             
@@ -117,6 +129,8 @@
     <div id="result"></div>
     <input id="sync" type="button" value="Sync Data" onclick="syncData()" />
     <input id="del" type="button" value="Remove Key" onclick="removeKey()" /><br />
+
+
 </body>
 
 </html>
