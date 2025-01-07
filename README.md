@@ -1,11 +1,11 @@
-# Memcached Viewer for Visual Studio Code
+# Memcached Editor for Visual Studio Code
 
 <!-- [![Build status](https://dev.azure.com/pikadun/vscode-redis/_apis/build/status/vscode-redis-build)](https://dev.azure.com/pikadun/vscode-redis/_build?definitionId=6)
 [![installs](https://vsmarketplacebadge.apphb.com/installs-short/Dunn.redis.svg)](https://marketplace.visualstudio.com/items?itemName=Dunn.redis)
 [![rating](https://vsmarketplacebadge.apphb.com/rating-star/Dunn.redis.svg)](https://marketplace.visualstudio.com/items?itemName=Dunn.redis)
 [![star](https://img.shields.io/github/stars/pikadun/vscode-redis)](https://github.com/pikadun/vscode-redis) -->
 
-Welcome to the memcached-viewer extension for Visual Studio Code!
+Welcome to the memcached-editor extension for Visual Studio Code!
 
 This extension lets you connect to a memcached Server and view data.
 
@@ -27,7 +27,8 @@ This extension lets you connect to a memcached Server and view data.
 ### You can add a memcached connection by follow steps
 
 ![Settings]
-+ Press Memcached Viewer Icon on activityBar 
+
++ Press Memcached Editor Icon on activityBar
 + Click Add button on Title bar
 + Enter server settings
 + Click Test to check avaliable
@@ -36,6 +37,7 @@ This extension lets you connect to a memcached Server and view data.
 ### Open a terminal to use telnet
 
 ![Terminal]
-+ Press Memcached Viewer Icon on activityBar 
+
++ Press Memcached Editor Icon on activityBar
 + Click Terminal button on Title bar
 + type memcached commands here

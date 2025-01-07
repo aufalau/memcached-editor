@@ -26,7 +26,7 @@ export function activate(context: vscode.ExtensionContext) {
 	vscode.commands.registerCommand('memcached.server.edit', (element: ServerItem) => provider.editServer(element));
 	vscode.commands.registerCommand('memcached.server.delete', (element: ServerItem) => provider.deleteServer(element));
 	vscode.commands.registerCommand('memcached.repo.git', () => {
-		const url = vscode.Uri.parse(Constant.GITEE_REPO);
+		const url = vscode.Uri.parse(Constant.GITHUB_REPO);
         vscode.env.openExternal(url);
 	});
 

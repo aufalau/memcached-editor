@@ -27,8 +27,8 @@ class Pseudo implements vscode.Pseudoterminal {
     open(initialDimensions: vscode.TerminalDimensions | undefined): void {
         // if (this.showWelcome) {
         //     this.writeEmitter.fire('Welcome to memcached extension!\r\n');
-        //     this.writeEmitter.fire(` ⭐ Star:     ${Constant.GITEE_REPO}.\r\n`);
-        //     this.writeEmitter.fire(` 💬 Feedback: ${Constant.GITEE_REPO}/issues.\r\n`);
+        //     this.writeEmitter.fire(` ⭐ Star:     ${Constant.GITHUB_REPO}.\r\n`);
+        //     this.writeEmitter.fire(` 💬 Feedback: ${Constant.GITHUB_REPO}/issues.\r\n`);
         //     this.writeEmitter.fire('\r\n');
         // }
         // this.writeEmitter.fire(this.name);
