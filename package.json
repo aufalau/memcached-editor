@@ -2,7 +2,7 @@
   "name": "memcached-viewer",
   "displayName": "Memcached Editor",
   "description": "",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "publisher": "AufaLau",
   "engines": {
     "vscode": "^1.78.0"

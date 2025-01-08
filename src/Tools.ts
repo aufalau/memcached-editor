@@ -103,6 +103,35 @@ export async function setMemcachedItem(server: string, key: string, value: strin
         remove: true
     });
 
+    // return new Promise((resolve, reject) => {
+    //     client.get(key, (err: any, data: any) => {
+    //         if (err) {
+    //             client.end();
+    //             reject(err);
+    //         } else {
+    //             if(data){
+    //                 client.replace(key, value, lifetime, (err: any, result: boolean) => {
+    //                     client.end();
+    //                     if (err) {
+    //                         reject(err);
+    //                     } else {
+    //                         resolve(result);
+    //                     }
+    //                 });
+    //             }else{
+    //                 client.add(key, value, lifetime, (err: any, result: boolean) => {
+    //                     client.end();
+    //                     if (err) {
+    //                         reject(err);
+    //                     } else {
+    //                         resolve(result);
+    //                     }
+    //                 });
+    //             }
+    //         }
+    //     });
+    // });
+
     return new Promise((resolve, reject) => {
         client.set(key, value, lifetime, (err: any, result: boolean) => {
             client.end();

@@ -3,76 +3,156 @@
     <title>Memcached - New Connection Settings</title>
     <script>
         const vscode = acquireVsCodeApi();
+
+        function showResult(clsssName, message){
+            let result = document.getElementById("result");
+            result.className = clsssName;
+            result.innerHTML = message;
+        }
+
+        function openServer(server){
+            const message = { type: 'pickItem', data: { server } };
+            vscode.postMessage(message);
+        }
+
         function openSlab(server, slab){
             const message = { type: 'pickItem', data: { server, slab } };
             vscode.postMessage(message);
         }
 
-        function openData(server, slab, key){
+        function openKey(server, slab, key){
             const message = { type: 'pickItem', data: { server, slab, key } };
             vscode.postMessage(message);
         }
 
+        function syncServer(){
+            let server = document.getElementById("server").innerHTML || "localhost:11211";
+            openServer(server);
+        }
+
+        function syncSlab(){
+            let server = document.getElementById("slabServer").innerHTML || "localhost:11211";
+            let slab = document.getElementById("slab").innerHTML || 0;
+            openSlab(server, slab);
+        }
+
+        function syncKey(){
+            let server = document.getElementById("keyServer").innerHTML || "localhost:11211";
+            let slab = document.getElementById("keySlab").innerHTML || 0;
+            let key = document.getElementById("key").innerHTML || 0;
+            openKey(server, slab, key);
+        }
+
         function searchKey(){
-            server = document.getElementById("server").innerHTML || "localhost:11211";
-            key = document.getElementById("item").value || "";
+            let server = document.getElementById("server").innerHTML || "localhost:11211";
+            let key = document.getElementById("item").value || "";
             const message = { type: 'searchKey', data: { server, key } };
             vscode.postMessage(message);
         }
 
-        function syncData() {
-            server = document.getElementById("server").innerHTML || "localhost:11211";
-            slab = document.getElementById("slabid").innerHTML || 0;
-            key = document.getElementById("key").innerHTML || "";
-            const message = { type: 'syncData', data: { server, slab, key } };
-            vscode.postMessage(message);
-        }
-
         function removeKey() {
-            server = document.getElementById("server").innerHTML || "localhost:11211";
-            slab = document.getElementById("slabid").innerHTML || 0;
-            key = document.getElementById("key").innerHTML || "";
+            let server = document.getElementById("keyServer").innerHTML || "localhost:11211";
+            let slab = document.getElementById("keySlab").innerHTML || 0;
+            let key = document.getElementById("key").innerHTML || 0;
             const message = { type: 'removeKey', data: { server, slab, key } };
             vscode.postMessage(message);
         }
+
+        function editKey(){
+            let key = document.getElementById("key").innerHTML || 0;
+            let data = document.getElementById("data").innerHTML || "";
+
+            document.getElementById("editorKey").readOnly = true;
+            document.getElementById("editorKey").value = key;
+            document.getElementById("editorData").value = data;
+        }
+
+        function setKey(){
+            let server = document.getElementById("keyServer").innerHTML || "localhost:11211";
+            let key = document.getElementById("editorKey").value || 0;
+            let value = document.getElementById("editorData").value || "";
+            const message = { type: 'setKey', data: { server, key, value } };
+            vscode.postMessage(message);
+        }
+
+        // function addKeySubmit(){
+        //     let server = document.getElementById("server").innerHTML || "localhost:11211";
+        //     let key = document.getElementById("addKey").innerHTML || "";
+        //     let value = document.getElementById("addData").innerHTML || "";
+        //     const message = { type: 'setKey', data: { server, key, value} };
+        //     vscode.postMessage(message);
+        // }
         
         window.addEventListener('message', (event) => {
             const message = event.data;
-            if (message.type === 'syncServer') {
-                document.getElementById("title").innerHTML = "slabs on memcached server";
-                document.getElementById("node").innerHTML = `<div>server:&nbsp;<span id="server">${message.node.server}</span></div><div>slab count:&nbsp<span>${message.data.length}</span></div>`;
-                document.getElementById("data").innerHTML = message.data.map(slab=>`<a href="javascript:void(0);" onclick="openSlab('${message.node.server}', '${slab}')">${slab}</a>&nbsp;`);
-                document.getElementById("result").innerHTML = "";
-                document.getElementById("sync").style.display = "none";
-                document.getElementById("del").style.display = "none";
+            if(message.type === 'updateIcon') {
+                document.getElementById("syncServer").src = message.node.syncPath;
+                document.getElementById("syncSlab").src = message.node.syncPath;
+                document.getElementById("refKey").src = message.node.syncPath;
+                document.getElementById("rmKey").src = message.node.delPath;
+                document.getElementById("editKey").src = message.node.editPath;
+                document.getElementById("search").src = message.node.searchPath;
+                document.getElementById("setKey").src = message.node.savePath;
+            }
+            else if (message.type === 'syncServer') {
+                showResult(message.result == 0 ? "success":"failed",  message["err"]||"Sync Server Successed!")
+
+                document.getElementById("server").innerHTML = `${message.node.server}`;
+                document.getElementById("slabcount").innerHTML = `${message.data.length}`;
+                document.getElementById("slablist").innerHTML = message.data.map(slab=>`<a href="javascript:void(0);" onclick="openSlab('${message.node.server}', '${slab}')">${slab}</a>&nbsp;`);
             }
             else if (message.type === 'syncSlab') {
-                document.getElementById("title").innerHTML = "items on memcached server";
-                document.getElementById("node").innerHTML = `<div>server:&nbsp;<span id="server">${message.node.server}</span></div><div>slabid:&nbsp<span id="slabid">${message.node.slab}</span></div><div>item count:&nbsp<span>${message.data.length}</span></div>`;
-                document.getElementById("data").innerHTML = message.data.map(key=>`<a href="javascript:void(0);" onclick="openData('${message.node.server}', '${message.node.slab}', '${key}')">${key}</a>&nbsp;`);;
-                document.getElementById("result").innerHTML = "";
-                document.getElementById("sync").style.display = "none";
-                document.getElementById("del").style.display = "none";
+                showResult(message.result == 0 ? "success":"failed",  message["err"]||"Sync Slab Successed!")
+
+                document.getElementById("slabinfo").style.display = "";
+                document.getElementById("slabServer").innerHTML = `${message.node.server}`;
+                document.getElementById("slab").innerHTML = `${message.node.slab}`;
+                document.getElementById("keycount").innerHTML = `${message.data.length}`;
+                document.getElementById("keylist").innerHTML = message.data.map(key=>`<a href="javascript:void(0);" onclick="openKey('${message.node.server}', '${message.node.slab}', '${key}')">${key}</a>&nbsp;`);;
             }
-            else if (message.type === 'syncData') {
-                document.getElementById("title").innerHTML = "data on memcached server";
-                var result = document.getElementById("result");
-                result.className = (message.result == 0 ? "success" : "failed");
-                result.innerText = (message.result == 0 ? "Sync Successed!" : "Sync Failed!");
-                document.getElementById("node").innerHTML = `<div>server:&nbsp;<span id="server">${message.node.server}</span></div><div>slabid:&nbsp<span id="slabid">${message.node.slab}</span></div><div>key:&nbsp;<span id="key">${message.node.key}</span></div>`;
+            else if (message.type === 'syncKey') {
+                showResult(message.result == 0 ? "success":"failed",  message["err"]||"Sync Key Successed!")
+
+                document.getElementById("keyinfo").style.display = "";
+                document.getElementById("keyServer").innerHTML = `${message.node.server}`;
+                document.getElementById("keySlab").innerHTML = `${message.node.slab}`;
+                document.getElementById("key").innerHTML = `${message.node.key}`;
                 document.getElementById("data").innerHTML = message.data;
-                document.getElementById("sync").style.display = "";
-                document.getElementById("del").style.display = "";
-            } else if (message.type === 'removeKey') {
-                var result = document.getElementById("result");
-                result.className = (message.result == 0 ? "success" : "failed");
-                result.innerText = (message.result == 0 ? "Remove Successed!" : `Remove Failed! ${message.data}`);
-                if (message == 0) {
-                    document.getElementById("node").innerHTML = "";
-                    document.getElementById("data").innerHTML = "NO DATA";
+
+                document.getElementById("refKey").style.display = "";
+                document.getElementById("rmKey").style.display = "";
+                document.getElementById("editKey").style.display = "";
+            } 
+            else if (message.type === 'setKey') {
+                showResult(message.result == 0 ? "success":"failed",  message["err"]||"Update Key Successed!")
+                if (message.result == 0) {
+                    document.getElementById("keyinfo").style.display = "";
+                    document.getElementById("keyServer").innerHTML = `${message.node.server}`;
+                    document.getElementById("keySlab").innerHTML = `${message.node.slab}`;
+                    document.getElementById("key").innerHTML = `${message.node.key}`;
+                    document.getElementById("data").innerHTML = message.data;
+
+                    document.getElementById("refKey").style.display = "";
+                    document.getElementById("rmKey").style.display = "";
+                    document.getElementById("editKey").style.display = "";
                 }
-                document.getElementById("sync").style.display = "";
-                document.getElementById("del").style.display = "";
+
+                document.getElementById("editorKey").readOnly = false;
+                document.getElementById("editorKey").value = "";
+                document.getElementById("editorData").value = "";
+            } 
+            else if (message.type === 'removeKey') {
+                showResult(message.result == 0 ? "success":"failed",  message["err"]||"Remove Key Successed!")
+
+                if (message.result == 0) {
+                    document.getElementById("keyServer").innerHTML = "";
+                    document.getElementById("keySlab").innerHTML = "";
+                    document.getElementById("key").innerHTML = "";
+                    document.getElementById("data").innerHTML = "";
+                    document.getElementById("refKey").style.display = "none";
+                    document.getElementById("rmKey").style.display = "none";
+                    document.getElementById("editKey").style.display = "none";
+                }
             }
         });
     </script>
@@ -87,16 +167,23 @@
             margin: 16px 0px;
         }
 
-        .node {
-            border: 1px solid #303030;
+        table {
+            border-collapse: collapse;
+            width: 100%;
         }
 
-        .node>div {
-            /* border: 1px solid #303030; */
+        textarea {
+            width: 100%;
+            height: 200px;
+        }
 
-            display: table-cell;
-            vertical-align: middle;
-            padding: 20px;
+        th, td {
+            border: 1px solid #303030;
+            padding: 8px;
+            text-align: left;
+            min-width: 200px;
+            word-wrap: keep-all;
+            word-break: keep-all;
         }
 
         .node>div:first-child {
@@ -104,33 +191,94 @@
             border-right: 1px solid #303030;
         }
 
-        #data{
+        #slablist, #keylist, #data {
             word-wrap: break-word;
             word-break: break-all;
         }
     </style>
 </head>
 
-<body>
-    <h1 id="title"></h1>
+<body onload="onLoad()">
+    <h1>MEMCACHED EDITOR</h1>
+
+    <h2>Server Info</h2>
+    <!-- Server Info: server addr, slab count, slab id list -->
+    <table id="serverinfo">
+        <tr>
+            <th>Server</th>
+            <th>Slab Count</th>
+            <th>Slab List</th>
+            <th>Operation</th>
+        </tr>
+        <tr>
+            <td id="server"></td>
+            <td id="slabcount"></td>
+            <td id="slablist"></td>
+            <td id="op">
+                <img id="syncServer" src="./icon/sync.svg" alt="Refresh" onclick="syncServer()"/>
+            </td>
+        </tr>
+    </table>
+
+    <h2>Slab Info</h2>
+    <!-- Slab Info: slab id, key count, key list -->
+    <table id="slabinfo">
+        <tr>
+            <th>Server</th>
+            <th>Slab</th>
+            <th>Key Count</th>
+            <th>Key List</th>
+            <th>Operation</th>
+        </tr>
+        <tr>
+            <td id="slabServer"></td>
+            <td id="slab"></td>
+            <td id="keycount"></td>
+            <td id="keylist"></td>
+            <td id="op">
+                <img id="syncSlab" src="./icon/sync.svg" alt="Refresh" onclick="syncSlab()"/>
+            </td>
+        </tr>
+    </table>
+
+    <h2>Key Info</h2>
+    <!-- Key Info: key, value, op -->
+    <table id="keyinfo">
+        <tr>
+            <th>Server</th>
+            <th>Slab</th>
+            <th>Key</th>
+            <th>Value</th>
+            <th>Operation</th>
+        </tr>
+        <tr>
+            <td id="keyServer"></td>
+            <td id="keySlab"></td>
+            <td id="key"></td>
+            <td id="data"></td>
+            <td id="op">
+                <img id="refKey" src="./icon/sync.svg" alt="Refresh" onclick="syncKey()"/>
+                <img id="rmKey" src="./icon/del.svg" alt="Remove" onclick="removeKey()"/>
+                <img id="editKey" src="./icon/edit.svg" alt="Edit" onclick="editKey()"/>
+            </td>
+        </tr>
+    </table>
+
+    <h2>&nbsp;</h2>
     <div>
         <input id="item" type="text" placeholder="please input key"/>
-        <input id="search" type="button" value="Search" onclick="searchKey()" />
+        <img id="search" src="./icon/search.svg" alt="Search" onclick="searchKey()"/>
     </div>
-    <h2></h2>
-    <div class="node">
-        <div id="node">
-            
-        </div>
-        <div id="data">
 
-        </div>
+    <h2>&nbsp;</h2>
+    <div id="editor">
+        <input id="editorKey" type="text" placeholder="please input key"/><br/>
+        <textarea id="editorData" type="text" placeholder="please input data"></textarea>
+        <img id="setKey" src="./icon/save.svg" alt="Save" onclick="setKey()"/>
     </div>
+    
+    <h2>&nbsp;</h2>
     <div id="result"></div>
-    <input id="sync" type="button" value="Sync Data" onclick="syncData()" />
-    <input id="del" type="button" value="Remove Key" onclick="removeKey()" /><br />
-
-
 </body>
 
 </html>

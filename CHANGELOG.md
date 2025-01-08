@@ -32,3 +32,10 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 ## 0.1.4
 
 - Bug Fix
+
+## 0.1.5
+
+- Bug Fix
+- Edit Support
+- Delete Support
+- Add Support

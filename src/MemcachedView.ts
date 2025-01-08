@@ -24,27 +24,27 @@ export namespace MemcachedView {
         });
     }
 
-    export function connectServer(host: string, port: number, username?: string, password?: string, onResult?:(result:number)=>void): void {
+    export function connectServer(host: string, port: number, username?: string, password?: string, onResult?: (result: number) => void): void {
         const client = new Memcached(`${host}:${port}`, {
             retries: 10,
             retry: 10000,
             remove: true
-          });
-          
-          client.stats((err, data) => {
+        });
+
+        client.stats((err, data) => {
             if (err) {
-              console.error(err);
-              if (onResult) { onResult(-1); }
-              return;
+                console.error(err);
+                if (onResult) { onResult(-1); }
+                return;
             }
 
             if (onResult) { onResult(data.length); }
-          });
+        });
     }
 
     var settingView: vscode.WebviewPanel | undefined;
     export function openSettingsView(context: vscode.ExtensionContext): [vscode.Webview, boolean] {
-        if(settingView){
+        if (settingView) {
             settingView.reveal();
             return [settingView.webview, false];
         }
@@ -67,17 +67,17 @@ export namespace MemcachedView {
         vscode.workspace.fs.readFile(webViewPath).then(buffer => (settingView as vscode.WebviewPanel).webview.html = buffer.toString());
         context.subscriptions.push(settingView);
 
-        settingView.onDidDispose(()=>{
+        settingView.onDidDispose(() => {
             settingView = undefined;
         });
-        
+
         return [settingView.webview, true];
         // myView.webview.onDidReceiveMessage(message=>onDidReceiveMessage(message));
     }
 
     var dataView: vscode.WebviewPanel | undefined;
     export function openDataView(context: vscode.ExtensionContext): [vscode.Webview, boolean] {
-        if(dataView){
+        if (dataView) {
             dataView.reveal();
             return [dataView.webview, false];
         }
@@ -97,15 +97,17 @@ export namespace MemcachedView {
         vscode.window.registerWebviewPanelSerializer
         const webViewPath = vscode.Uri.file(path.join(context.extensionPath, 'html', 'data.html'));
 
-        vscode.workspace.fs.readFile(webViewPath).then(buffer => (dataView as vscode.WebviewPanel).webview.html = buffer.toString());
+        vscode.workspace.fs.readFile(webViewPath).then(buffer => {
+            (dataView as vscode.WebviewPanel).webview.html = buffer.toString();
+        });
         context.subscriptions.push(dataView);
 
-        dataView.onDidDispose(()=>{
+        dataView.onDidDispose(() => {
             dataView = undefined;
         });
         return [dataView.webview, true];
     }
-    
+
 }
 // function openView(context: vscode.ExtensionContext) {
 
