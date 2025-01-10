@@ -109,15 +109,7 @@ export class DataProvider implements vscode.TreeDataProvider<MemcachedItem> {
                 this.onDataViewMessage(webview, message);
             });
         }
-        const theme = vscode.window.activeColorTheme.kind;
 
-        const editPath = webview.asWebviewUri(vscode.Uri.file(path.join(__filename, '..', '..', 'html', 'icon', 'edit.svg')));
-        const syncPath = webview.asWebviewUri(vscode.Uri.file(path.join(__filename, '..', '..', 'html', 'icon', 'sync.svg')));
-        const delPath = webview.asWebviewUri(vscode.Uri.file(path.join(__filename, '..', '..', 'html', 'icon', 'del.svg')));
-        const savePath = webview.asWebviewUri(vscode.Uri.file(path.join(__filename, '..', '..', 'html', 'icon', 'save.svg')));
-        const searchPath = webview.asWebviewUri(vscode.Uri.file(path.join(__filename, '..', '..', 'html', 'icon', 'search.svg')));
-
-        this.onDataViewMessage(webview, { type: "updateIcon", data: { editPath, syncPath, delPath, savePath, searchPath } });
         this.onDataViewMessage(webview, { type: 'syncServer', data: { server: item.server } });
     }
 
@@ -194,10 +186,7 @@ export class DataProvider implements vscode.TreeDataProvider<MemcachedItem> {
 
     onDataViewMessage(webview: vscode.Webview, message: any): void {
         console.log(message);
-        if (message.type === "updateIcon") {
-            webview.postMessage({ type: message.type, node: message.data, result: 0 });
-        }
-        else if (message.type === "pickItem") {
+        if (message.type === "pickItem") {
             this.pickItem(message.data.server, message.data.slab, message.data.key);
         }
         else if (message.type === "syncServer") {

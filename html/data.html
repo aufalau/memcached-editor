@@ -1,49 +1,50 @@
 <html>
+
 <head>
     <title>Memcached - New Connection Settings</title>
     <script>
         const vscode = acquireVsCodeApi();
 
-        function showResult(clsssName, message){
+        function showResult(clsssName, message) {
             let result = document.getElementById("result");
             result.className = clsssName;
             result.innerHTML = message;
         }
 
-        function openServer(server){
+        function openServer(server) {
             const message = { type: 'pickItem', data: { server } };
             vscode.postMessage(message);
         }
 
-        function openSlab(server, slab){
+        function openSlab(server, slab) {
             const message = { type: 'pickItem', data: { server, slab } };
             vscode.postMessage(message);
         }
 
-        function openKey(server, slab, key){
+        function openKey(server, slab, key) {
             const message = { type: 'pickItem', data: { server, slab, key } };
             vscode.postMessage(message);
         }
 
-        function syncServer(){
+        function syncServer() {
             let server = document.getElementById("server").innerHTML || "localhost:11211";
             openServer(server);
         }
 
-        function syncSlab(){
+        function syncSlab() {
             let server = document.getElementById("slabServer").innerHTML || "localhost:11211";
             let slab = document.getElementById("slab").innerHTML || 0;
             openSlab(server, slab);
         }
 
-        function syncKey(){
+        function syncKey() {
             let server = document.getElementById("keyServer").innerHTML || "localhost:11211";
             let slab = document.getElementById("keySlab").innerHTML || 0;
             let key = document.getElementById("key").innerHTML || 0;
             openKey(server, slab, key);
         }
 
-        function searchKey(){
+        function searchKey() {
             let server = document.getElementById("server").innerHTML || "localhost:11211";
             let key = document.getElementById("item").value || "";
             const message = { type: 'searchKey', data: { server, key } };
@@ -58,7 +59,7 @@
             vscode.postMessage(message);
         }
 
-        function editKey(){
+        function editKey() {
             let key = document.getElementById("key").innerHTML || 0;
             let data = document.getElementById("data").innerHTML || "";
 
@@ -67,7 +68,7 @@
             document.getElementById("editorData").value = data;
         }
 
-        function setKey(){
+        function setKey() {
             let server = document.getElementById("keyServer").innerHTML || "localhost:11211";
             let key = document.getElementById("editorKey").value || 0;
             let value = document.getElementById("editorData").value || "";
@@ -82,36 +83,27 @@
         //     const message = { type: 'setKey', data: { server, key, value} };
         //     vscode.postMessage(message);
         // }
-        
+
         window.addEventListener('message', (event) => {
             const message = event.data;
-            if(message.type === 'updateIcon') {
-                document.getElementById("syncServer").src = message.node.syncPath;
-                document.getElementById("syncSlab").src = message.node.syncPath;
-                document.getElementById("refKey").src = message.node.syncPath;
-                document.getElementById("rmKey").src = message.node.delPath;
-                document.getElementById("editKey").src = message.node.editPath;
-                document.getElementById("search").src = message.node.searchPath;
-                document.getElementById("setKey").src = message.node.savePath;
-            }
-            else if (message.type === 'syncServer') {
-                showResult(message.result == 0 ? "success":"failed",  message["err"]||"Sync Server Successed!")
+            if (message.type === 'syncServer') {
+                showResult(message.result == 0 ? "success" : "failed", message["err"] || "Sync Server Successed!")
 
                 document.getElementById("server").innerHTML = `${message.node.server}`;
                 document.getElementById("slabcount").innerHTML = `${message.data.length}`;
-                document.getElementById("slablist").innerHTML = message.data.map(slab=>`<a href="javascript:void(0);" onclick="openSlab('${message.node.server}', '${slab}')">${slab}</a>&nbsp;`);
+                document.getElementById("slablist").innerHTML = message.data.map(slab => `<a href="javascript:void(0);" onclick="openSlab('${message.node.server}', '${slab}')">${slab}</a>&nbsp;`);
             }
             else if (message.type === 'syncSlab') {
-                showResult(message.result == 0 ? "success":"failed",  message["err"]||"Sync Slab Successed!")
+                showResult(message.result == 0 ? "success" : "failed", message["err"] || "Sync Slab Successed!")
 
                 document.getElementById("slabinfo").style.display = "";
                 document.getElementById("slabServer").innerHTML = `${message.node.server}`;
                 document.getElementById("slab").innerHTML = `${message.node.slab}`;
                 document.getElementById("keycount").innerHTML = `${message.data.length}`;
-                document.getElementById("keylist").innerHTML = message.data.map(key=>`<a href="javascript:void(0);" onclick="openKey('${message.node.server}', '${message.node.slab}', '${key}')">${key}</a>&nbsp;`);;
+                document.getElementById("keylist").innerHTML = message.data.map(key => `<a href="javascript:void(0);" onclick="openKey('${message.node.server}', '${message.node.slab}', '${key}')">${key}</a>&nbsp;`);;
             }
             else if (message.type === 'syncKey') {
-                showResult(message.result == 0 ? "success":"failed",  message["err"]||"Sync Key Successed!")
+                showResult(message.result == 0 ? "success" : "failed", message["err"] || "Sync Key Successed!")
 
                 document.getElementById("keyinfo").style.display = "";
                 document.getElementById("keyServer").innerHTML = `${message.node.server}`;
@@ -122,9 +114,9 @@
                 document.getElementById("refKey").style.display = "";
                 document.getElementById("rmKey").style.display = "";
                 document.getElementById("editKey").style.display = "";
-            } 
+            }
             else if (message.type === 'setKey') {
-                showResult(message.result == 0 ? "success":"failed",  message["err"]||"Update Key Successed!")
+                showResult(message.result == 0 ? "success" : "failed", message["err"] || "Update Key Successed!")
                 if (message.result == 0) {
                     document.getElementById("keyinfo").style.display = "";
                     document.getElementById("keyServer").innerHTML = `${message.node.server}`;
@@ -140,9 +132,9 @@
                 document.getElementById("editorKey").readOnly = false;
                 document.getElementById("editorKey").value = "";
                 document.getElementById("editorData").value = "";
-            } 
+            }
             else if (message.type === 'removeKey') {
-                showResult(message.result == 0 ? "success":"failed",  message["err"]||"Remove Key Successed!")
+                showResult(message.result == 0 ? "success" : "failed", message["err"] || "Remove Key Successed!")
 
                 if (message.result == 0) {
                     document.getElementById("keyServer").innerHTML = "";
@@ -157,6 +149,18 @@
         });
     </script>
     <style>
+        body{
+            font-size: 16px !important;
+        }
+        .main {
+            min-width: 1200px;
+            max-width: 1200px;
+            overflow-x: scroll;
+            overflow-y: scroll;
+            box-sizing: content-box;
+            margin: 0 auto;
+        }
+
         .success {
             color: green;
             margin: 16px 0px;
@@ -170,115 +174,172 @@
         table {
             border-collapse: collapse;
             width: 100%;
+            border: 1px solid #303030;
+            box-sizing: border-box;
         }
 
         textarea {
             width: 100%;
             height: 200px;
+            background-color: transparent;
+            border: 1px solid #303030;
+            margin-bottom: 10px;
+            margin-top: 10px;
+            color: unset;
+            box-sizing: border-box;
+            padding: 4px 12px;
         }
 
-        th, td {
+        input {
+            margin-top: 10px;
+            width: calc(100% - 30px);
+            background-color: transparent;
+            border: 1px solid #303030;
+            color: unset;
+            display: inline-flex;
+            box-sizing: border-box;
+            padding: 4px 12px;
+        }
+
+        img {
+            width: 20px;
+            height: 20px;
+            object-fit: contain;
+            display: inline-flex;
+            box-sizing: border-box;
+            border:2px solid transparent;
+        }
+
+        th,
+        td {
             border: 1px solid #303030;
             padding: 8px;
             text-align: left;
-            min-width: 200px;
             word-wrap: keep-all;
             word-break: keep-all;
+
+            .t1{
+                width: 160px;
+            }
+            .t2{
+                min-width: 200px;
+            }
+            .t3{
+                width: 200px;
+            }
         }
 
-        .node>div:first-child {
-            width: 200px;
-            border-right: 1px solid #303030;
-        }
-
-        #slablist, #keylist, #data {
+        #slablist,
+        #keylist,
+        #data {
             word-wrap: break-word;
             word-break: break-all;
+        }
+
+        .block{
+            line-height: 1.2;
         }
     </style>
 </head>
 
-<body onload="onLoad()">
-    <h1>MEMCACHED EDITOR</h1>
+<body>
+    <div class="main">
+        <h1>MEMCACHED EDITOR</h1>
 
-    <h2>Server Info</h2>
-    <!-- Server Info: server addr, slab count, slab id list -->
-    <table id="serverinfo">
-        <tr>
-            <th>Server</th>
-            <th>Slab Count</th>
-            <th>Slab List</th>
-            <th>Operation</th>
-        </tr>
-        <tr>
-            <td id="server"></td>
-            <td id="slabcount"></td>
-            <td id="slablist"></td>
-            <td id="op">
-                <img id="syncServer" src="./icon/sync.svg" alt="Refresh" onclick="syncServer()"/>
-            </td>
-        </tr>
-    </table>
+        <h2>Server Info</h2>
+        <!-- Server Info: server addr, slab count, slab id list -->
+        <table id="serverinfo">
+            <tr>
+                <th class="t1">Server</th>
+                <th class="t1">Slab Count</th>
+                <th class="t2">Slab List</th>
+                <th class="t3">Operation</th>
+            </tr>
+            <tr>
+                <td class="t1" id="server"></td>
+                <td class="t1" id="slabcount"></td>
+                <td class="t2" id="slablist"></td>
+                <td class="t3" id="op">
+                    <img id="syncServer"
+                        src="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBzdGFuZGFsb25lPSJubyI/PjwhRE9DVFlQRSBzdmcgUFVCTElDICItLy9XM0MvL0RURCBTVkcgMS4xLy9FTiIgImh0dHA6Ly93d3cudzMub3JnL0dyYXBoaWNzL1NWRy8xLjEvRFREL3N2ZzExLmR0ZCI+PHN2ZyBjbGFzcz0iaWNvbiIgd2lkdGg9IjIwMHB4IiBoZWlnaHQ9IjIwMC4wMHB4IiB2aWV3Qm94PSIwIDAgMTAyNCAxMDI0IiB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHBhdGggZmlsbD0iI2ZmZmZmZiIgZD0iTTEyOC4zODQgNTYxLjA4OEw0OS45MiA2NDAgMCA1OTAuNzJsMTMzLjc2LTEzMi40OCA0OC42NCAwLjY0IDEzMy43NiAxMzUuNjgtNDguNjQgNDguNjQtNzQuNjg4LTc1LjUyYTMyMCAzMjAgMCAwIDAgNjAxLjYgMTI2LjkxMmw1Mi4wMzIgMzguMjA4YTM4NCAzODQgMCAwIDEtNzE4LjA4LTE3MS43MTJ6IG03MDMuMzYtMjkuODI0TDc1Mi42NCA0NTEuMmwtNDguNjQgNDguNjQgMTMzLjc2IDEzNS4wNCA0OC42NCAwLjY0IDEzMy43Ni0xMzIuNDgtNDgtNDguNjQtNzYuNDE2IDc1LjUyYTM4NCAzODQgMCAwIDAtNzExLjA0LTE4Ni44OGw1MS44NCAzOC4wMTZhMzIwIDMyMCAwIDAgMSA1OTUuMiAxNTAuMTQ0eiIgIC8+PC9zdmc+"
+                        alt="Refresh" onclick="syncServer()" />
+                </td>
+            </tr>
+        </table>
 
-    <h2>Slab Info</h2>
-    <!-- Slab Info: slab id, key count, key list -->
-    <table id="slabinfo">
-        <tr>
-            <th>Server</th>
-            <th>Slab</th>
-            <th>Key Count</th>
-            <th>Key List</th>
-            <th>Operation</th>
-        </tr>
-        <tr>
-            <td id="slabServer"></td>
-            <td id="slab"></td>
-            <td id="keycount"></td>
-            <td id="keylist"></td>
-            <td id="op">
-                <img id="syncSlab" src="./icon/sync.svg" alt="Refresh" onclick="syncSlab()"/>
-            </td>
-        </tr>
-    </table>
+        <h2>Slab Info</h2>
+        <!-- Slab Info: slab id, key count, key list -->
+        <table id="slabinfo">
+            <tr>
+                <th class="t1">Server</th>
+                <th class="t1">Slab</th>
+                <th class="t1">Key Count</th>
+                <th class="t2">Key List</th>
+                <th class="t3">Operation</th>
+            </tr>
+            <tr>
+                <td class="t1" id="slabServer"></td>
+                <td class="t1" id="slab"></td>
+                <td class="t1" id="keycount"></td>
+                <td class="t2" id="keylist"></td>
+                <td class="t3" id="op">
+                    <img id="syncSlab"
+                        src="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBzdGFuZGFsb25lPSJubyI/PjwhRE9DVFlQRSBzdmcgUFVCTElDICItLy9XM0MvL0RURCBTVkcgMS4xLy9FTiIgImh0dHA6Ly93d3cudzMub3JnL0dyYXBoaWNzL1NWRy8xLjEvRFREL3N2ZzExLmR0ZCI+PHN2ZyBjbGFzcz0iaWNvbiIgd2lkdGg9IjIwMHB4IiBoZWlnaHQ9IjIwMC4wMHB4IiB2aWV3Qm94PSIwIDAgMTAyNCAxMDI0IiB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHBhdGggZmlsbD0iI2ZmZmZmZiIgZD0iTTEyOC4zODQgNTYxLjA4OEw0OS45MiA2NDAgMCA1OTAuNzJsMTMzLjc2LTEzMi40OCA0OC42NCAwLjY0IDEzMy43NiAxMzUuNjgtNDguNjQgNDguNjQtNzQuNjg4LTc1LjUyYTMyMCAzMjAgMCAwIDAgNjAxLjYgMTI2LjkxMmw1Mi4wMzIgMzguMjA4YTM4NCAzODQgMCAwIDEtNzE4LjA4LTE3MS43MTJ6IG03MDMuMzYtMjkuODI0TDc1Mi42NCA0NTEuMmwtNDguNjQgNDguNjQgMTMzLjc2IDEzNS4wNCA0OC42NCAwLjY0IDEzMy43Ni0xMzIuNDgtNDgtNDguNjQtNzYuNDE2IDc1LjUyYTM4NCAzODQgMCAwIDAtNzExLjA0LTE4Ni44OGw1MS44NCAzOC4wMTZhMzIwIDMyMCAwIDAgMSA1OTUuMiAxNTAuMTQ0eiIgIC8+PC9zdmc+"
+                        alt="Refresh" onclick="syncSlab()" />
+                </td>
+            </tr>
+        </table>
 
-    <h2>Key Info</h2>
-    <!-- Key Info: key, value, op -->
-    <table id="keyinfo">
-        <tr>
-            <th>Server</th>
-            <th>Slab</th>
-            <th>Key</th>
-            <th>Value</th>
-            <th>Operation</th>
-        </tr>
-        <tr>
-            <td id="keyServer"></td>
-            <td id="keySlab"></td>
-            <td id="key"></td>
-            <td id="data"></td>
-            <td id="op">
-                <img id="refKey" src="./icon/sync.svg" alt="Refresh" onclick="syncKey()"/>
-                <img id="rmKey" src="./icon/del.svg" alt="Remove" onclick="removeKey()"/>
-                <img id="editKey" src="./icon/edit.svg" alt="Edit" onclick="editKey()"/>
-            </td>
-        </tr>
-    </table>
+        <h2>Key Info</h2>
+        <!-- Key Info: key, value, op -->
+        <table id="keyinfo">
+            <tr>
+                <th class="t1">Server</th>
+                <th class="t1">Slab</th>
+                <th class="t1">Key</th>
+                <th class="t2">Value</th>
+                <th class="t3">Operation</th>
+            </tr>
+            <tr>
+                <td class="t1" id="keyServer"></td>
+                <td class="t1" id="keySlab"></td>
+                <td class="t1" id="key"></td>
+                <td class="t2" id="data"></td>
+                <td class="t3" id="op">
+                    <img id="refKey"
+                        src="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBzdGFuZGFsb25lPSJubyI/PjwhRE9DVFlQRSBzdmcgUFVCTElDICItLy9XM0MvL0RURCBTVkcgMS4xLy9FTiIgImh0dHA6Ly93d3cudzMub3JnL0dyYXBoaWNzL1NWRy8xLjEvRFREL3N2ZzExLmR0ZCI+PHN2ZyBjbGFzcz0iaWNvbiIgd2lkdGg9IjIwMHB4IiBoZWlnaHQ9IjIwMC4wMHB4IiB2aWV3Qm94PSIwIDAgMTAyNCAxMDI0IiB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHBhdGggZmlsbD0iI2ZmZmZmZiIgZD0iTTEyOC4zODQgNTYxLjA4OEw0OS45MiA2NDAgMCA1OTAuNzJsMTMzLjc2LTEzMi40OCA0OC42NCAwLjY0IDEzMy43NiAxMzUuNjgtNDguNjQgNDguNjQtNzQuNjg4LTc1LjUyYTMyMCAzMjAgMCAwIDAgNjAxLjYgMTI2LjkxMmw1Mi4wMzIgMzguMjA4YTM4NCAzODQgMCAwIDEtNzE4LjA4LTE3MS43MTJ6IG03MDMuMzYtMjkuODI0TDc1Mi42NCA0NTEuMmwtNDguNjQgNDguNjQgMTMzLjc2IDEzNS4wNCA0OC42NCAwLjY0IDEzMy43Ni0xMzIuNDgtNDgtNDguNjQtNzYuNDE2IDc1LjUyYTM4NCAzODQgMCAwIDAtNzExLjA0LTE4Ni44OGw1MS44NCAzOC4wMTZhMzIwIDMyMCAwIDAgMSA1OTUuMiAxNTAuMTQ0eiIgIC8+PC9zdmc+"
+                        alt="Refresh" onclick="syncKey()" />
+                    <img id="rmKey"
+                        src="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBzdGFuZGFsb25lPSJubyI/PjwhRE9DVFlQRSBzdmcgUFVCTElDICItLy9XM0MvL0RURCBTVkcgMS4xLy9FTiIgImh0dHA6Ly93d3cudzMub3JnL0dyYXBoaWNzL1NWRy8xLjEvRFREL3N2ZzExLmR0ZCI+PHN2ZyBjbGFzcz0iaWNvbiIgd2lkdGg9IjIwMHB4IiBoZWlnaHQ9IjE4NS4wMHB4IiB2aWV3Qm94PSIwIDAgMTEwNyAxMDI0IiB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHBhdGggZmlsbD0iI2ZmZmZmZiIgZD0iTTIzMi4xNDM1NjggOTYyLjcxODE0N2MtMC40OTgxNjItMC45NjQ2OTUtMC44NTM5OTItMi4zNzIyMDEtMC44NTM5OTMtNC4wMzY2OTVWMzQwLjAxNTQ0NGEyOS42NTI1MSAyOS42NTI1MSAwIDAgMC01OS4zMDUwMTkgMHY2MTguNjY2MDA4YzAgMzMuOTAyNzAzIDI0LjU3NiA2My4zNDE3MTQgNTcuNzkwNzY0IDYzLjM0MTcxNGg2MzkuNTY5MDUxYzMzLjIxODcxOCAwIDU3Ljc5MDc2NC0yOS40MTkyNDMgNTcuNzkwNzY0LTYzLjM0MTcxNFYzNDAuMDE1NDQ0YTI5LjY1MjUxIDI5LjY1MjUxIDAgMSAwLTU5LjMwNTAxOSAwdjYxOC42NjYwMDhjMCAxLjY2NDQ5NC0wLjM1NTgzIDMuMDcyLTAuODQ2MDg1IDQuMDM2Njk1SDIzMi4xNDM1Njh6TTI5LjY1MjUxIDE5OS42NjAyMzJoMTA0Ny43MjIwMDdhMjkuNjUyNTEgMjkuNjUyNTEgMCAxIDAgMC01OS4zMDUwMkgyOS42NTI1MWEyOS42NTI1MSAyOS42NTI1MSAwIDAgMCAwIDU5LjMwNTAyeiIgIC8+PHBhdGggZmlsbD0iI2ZmZmZmZiIgZD0iTTM0NS45NDU5NDYgMzc5LjU1MjEyNHY0MzMuMTg3NTgzYTI5LjY1MjUxIDI5LjY1MjUxIDAgMSAwIDU5LjMwNTAxOSAwVjM3OS41NTIxMjRhMjkuNjUyNTEgMjkuNjUyNTEgMCAwIDAtNTkuMzA1MDE5IDB6TTUxOS45MDczMzYgMzc5LjU1MjEyNHY0MzMuMTg3NTgzYTI5LjY1MjUxIDI5LjY1MjUxIDAgMSAwIDU5LjMwNTAxOSAwVjM3OS41NTIxMjRhMjkuNjUyNTEgMjkuNjUyNTEgMCAxIDAtNTkuMzA1MDE5IDB6TTY5Ny44MjIzOTQgMzc5LjU1MjEyNHY0MzMuMTg3NTgzYTI5LjY1MjUxIDI5LjY1MjUxIDAgMSAwIDU5LjMwNTAxOSAwVjM3OS41NTIxMjRhMjkuNjUyNTEgMjkuNjUyNTEgMCAxIDAtNTkuMzA1MDE5IDB6TTM2NS43MTQyODYgMTYyLjEyNDEwOFY2My4yMzQ5NjVjMC0xLjA3MTQ0NCAwLjg4MTY2OC0xLjk1MzExMiAxLjk5NjYwMi0xLjk1MzExMmgzNzUuNTU4OTE5YzEuMDk1MTY2IDAgMS45OTY2MDIgMC45MDE0MzYgMS45OTY2MDIgMS45NTMxMTJ2OTguODg5MTQzYTI5LjY1MjUxIDI5LjY1MjUxIDAgMSAwIDU5LjMwNTAyIDBWNjMuMjM0OTY1QzgwNC41NzE0MjkgMjkuNDIzMTk3IDc3Ny4xMDkyNTEgMS45NzY4MzQgNzQzLjI2OTgwNyAxLjk3NjgzNGgtMzc1LjU1ODkxOUMzMzMuODYzNTM3IDEuOTc2ODM0IDMwNi40MDkyNjYgMjkuMzkxNTY4IDMwNi40MDkyNjYgNjMuMjM0OTY1djk4Ljg4OTE0M2EyOS42NTI1MSAyOS42NTI1MSAwIDAgMCA1OS4zMDUwMiAweiIgIC8+PC9zdmc+"
+                        alt="Remove" onclick="removeKey()" />
+                    <img id="editKey"
+                        src="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBzdGFuZGFsb25lPSJubyI/PjwhRE9DVFlQRSBzdmcgUFVCTElDICItLy9XM0MvL0RURCBTVkcgMS4xLy9FTiIgImh0dHA6Ly93d3cudzMub3JnL0dyYXBoaWNzL1NWRy8xLjEvRFREL3N2ZzExLmR0ZCI+PHN2ZyBjbGFzcz0iaWNvbiIgd2lkdGg9IjIwMHB4IiBoZWlnaHQ9IjIwMC4wMHB4IiB2aWV3Qm94PSIwIDAgMTAyNCAxMDI0IiB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHBhdGggZmlsbD0iI2ZmZmZmZiIgZD0iTTg1NC4yMDggMzE0Ljc1MmE1NS4yOTYgNTUuMjk2IDAgMCAxIDExMC41MjggMHY1MzUuMzZjMCA2MS42MzItNDkuOTg0IDExMS42MTYtMTExLjYxNiAxMTEuNjE2SDE3Ni43NjhjLTYxLjY5NiAwLTExMS42MTYtNDkuOTItMTExLjYxNi0xMTEuNjE2VjE3My44ODhjMC02MS42MzIgNTAuMDQ4LTExMS42MTYgMTExLjYxNi0xMTEuNjE2aDUzNi4xMjhhNTUuMjk2IDU1LjI5NiAwIDAgMSAwIDExMC40NjRIMTc2Ljc2OGExLjE1MiAxLjE1MiAwIDAgMC0xLjAyNCAxLjAyNHY2NzYuMzUyYzAgMC42NCAwLjM4NCAxLjE1MiAxLjAyNCAxLjE1Mkg4NTMuMTJjMC41NzYgMCAxLjAyNC0wLjQ0OCAxLjA4OC0xLjAyNFYzMTQuNjg4djAuMDY0eiBtMzYuODY0LTIzMi41MTJhNTUuMjk2IDU1LjI5NiAwIDAgMSA3Ni4xNiA3OS44NzJMNTY3LjkzNiA1NDIuNzJhNTUuMjk2IDU1LjI5NiAwIDEgMS03Ni4yMjQtODBsMzk5LjQyNC0zODAuNDh6IiAgLz48L3N2Zz4="
+                        alt="Edit" onclick="editKey()" />
+                </td>
+            </tr>
+        </table>
 
-    <h2>&nbsp;</h2>
-    <div>
-        <input id="item" type="text" placeholder="please input key"/>
-        <img id="search" src="./icon/search.svg" alt="Search" onclick="searchKey()"/>
+        <h2>&nbsp;</h2>
+        <div class="block">
+            <input id="item" type="text" placeholder="please input key" />
+            <img id="search"
+                src="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBzdGFuZGFsb25lPSJubyI/PjwhRE9DVFlQRSBzdmcgUFVCTElDICItLy9XM0MvL0RURCBTVkcgMS4xLy9FTiIgImh0dHA6Ly93d3cudzMub3JnL0dyYXBoaWNzL1NWRy8xLjEvRFREL3N2ZzExLmR0ZCI+PHN2ZyBjbGFzcz0iaWNvbiIgd2lkdGg9IjIwMHB4IiBoZWlnaHQ9IjIwMC4wMHB4IiB2aWV3Qm94PSIwIDAgMTAyNCAxMDI0IiB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHBhdGggZmlsbD0iI2ZmZmZmZiIgZD0iTTgxNC4wOCA3NTguNzg0TDY0NC4wOTYgNTg5LjgyNGMzNC44MTYtNDguMTI4IDUyLjIyNC0xMDkuNTY4IDQzLjAwOC0xNzUuMTA0QzY3MS43NDQgMzA1LjE1MiA1ODIuNjU2IDIxOC4xMTIgNDcxLjA0IDIwNy44NzJjLTE1MC41MjgtMTUuMzYtMjc4LjUyOCAxMTIuNjQtMjYzLjE2OCAyNjQuMTkyIDEwLjI0IDEwOS41NjggOTcuMjggMjAwLjcwNCAyMDYuODQ4IDIxNi4wNjQgNjUuNTM2IDkuMjE2IDEyNS45NTItOS4yMTYgMTc1LjEwNC00My4wMDhsMTY5Ljk4NCAxNjkuOTg0YzcuMTY4IDcuMTY4IDE5LjQ1NiA3LjE2OCAyNi42MjQgMGwyNi42MjQtMjYuNjI0YzguMTkyLTkuMjE2IDguMTkyLTIxLjUwNCAxLjAyNC0yOS42OTZ6TTI4My42NDggNDQ3LjQ4OGMwLTkwLjExMiA3My43MjgtMTY0Ljg2NCAxNjQuODY0LTE2NC44NjRzMTY0Ljg2NCA3My43MjggMTY0Ljg2NCAxNjQuODY0LTczLjcyOCAxNjQuODY0LTE2NC44NjQgMTY0Ljg2NC0xNjQuODY0LTcyLjcwNC0xNjQuODY0LTE2NC44NjR6IiAgLz48L3N2Zz4="
+                alt="Search" onclick="searchKey()" />
+        </div>
+
+        <h2>&nbsp;</h2>
+        <div class="block" id="editor">
+            <input id="editorKey" type="text" placeholder="please input key" />
+            <img id="setKey"
+                src="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBzdGFuZGFsb25lPSJubyI/PjwhRE9DVFlQRSBzdmcgUFVCTElDICItLy9XM0MvL0RURCBTVkcgMS4xLy9FTiIgImh0dHA6Ly93d3cudzMub3JnL0dyYXBoaWNzL1NWRy8xLjEvRFREL3N2ZzExLmR0ZCI+PHN2ZyB0PSIxNzM2MzIzMzA3MzE3IiBjbGFzcz0iaWNvbiIgdmlld0JveD0iMCAwIDEyNjEgMTAyNCIgdmVyc2lvbj0iMS4xIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHAtaWQ9IjI5MjQ1IiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgd2lkdGg9IjI0Ni4yODkwNjI1IiBoZWlnaHQ9IjIwMCI+PHBhdGggZD0iTTk2MS43NzYxMjIgODY2LjMzMzU4OGE1OS4yMjU3MTQgNTkuMjI1NzE0IDAgMCAxIDAtMTE4LjEzNjM5OSAxNzcuNjc3MTQzIDE3Ny42NzcxNDMgMCAwIDAgMTgxLjE0MjQ3Ny0xNzcuMjA0NTk3IDE3MC4zNTI2ODYgMTcwLjM1MjY4NiAwIDAgMC02My4wMDYwNzktMTMyLjQ3MDI4MWMwLTMuMzA3ODE5LTcuODc1NzYtNi40NTgxMjMtNy44NzU3Ni05LjUyOTY3di0wLjYzMDA2MWMtNy44NzU3Ni0yLjc1NjUxNi03Ljg3NTc2LTUuNDM0Mjc0LTE1Ljc1MTUyLTcuODc1NzZ2LTEuMTgxMzY0YzAtMi4yMDUyMTMtNy44NzU3Ni00LjQxMDQyNi03Ljg3NTc2LTYuMzc5MzY1LTcuODc1NzYtMC41NTEzMDMtNy44NzU3Ni0xLjEwMjYwNi03Ljg3NTc1OS0xLjU3NTE1MiAwLTEuNzMyNjY3LTcuODc1NzYtMy4zODY1NzctNy44NzU3Ni00Ljg4Mjk3MXMtNy44NzU3Ni0xLjE4MTM2NC03Ljg3NTc2LTEuODExNDI1LTcuODc1NzYtMi40NDE0ODYtNy44NzU3Ni0zLjQ2NTMzNC03Ljg3NTc2LTEuMjYwMTIyLTcuODc1NzYtMS44MTE0MjUtNy44NzU3Ni0xLjU3NTE1Mi03Ljg3NTc2LTIuMTI2NDU1Yy03Ljg3NTc2LTAuNjMwMDYxLTcuODc1NzYtMS4wMjM4NDktNy44NzU3Ni0xLjQ5NjM5NWExMi42MDEyMTYgMTIuNjAxMjE2IDAgMCAxLTcuODc1NzYtMC45NDUwOTFjLTcuODc1NzYtMC41NTEzMDMtMTUuNzUxNTItMC45NDUwOTEtMjMuNjI3Mjc5LTAuOTQ1MDkxIDAtMTAuMDgwOTczLTcuODc1NzYtMjAuMDA0NDMtNy44NzU3Ni0yOS43NzAzNzJ2LTcuMDA5NDI3YTI1LjkxMTI1IDI1LjkxMTI1IDAgMCAxLTcuODc1NzYtMjEuOTczMzdjMC0yLjEyNjQ1NSAwLTQuMTc0MTUzLTcuODc1NzYtNi4zMDA2MDhhMjQuNTcyMzcxIDI0LjU3MjM3MSAwIDAgMC03Ljg3NTc2LTIxLjUwMDgyNFYzMDIuNDI5MThjLTcuODc1NzYtNy4zMjQ0NTctNy44NzU3Ni0xNC41NzAxNTYtMTUuNzUxNTItMjEuNTc5NTgyQTMyOS4yMDY3NjMgMzI5LjIwNjc2MyAwIDAgMCA2MzAuOTk0MjA2IDExOC4wNTc2NDFhMzE5LjY3NzA5NCAzMTkuNjc3MDk0IDAgMCAwLTI4My41MjczNTYgMTYyLjc5MTk1N2MtNy44NzU3NiA3LjAwOTQyNi03Ljg3NTc2IDE0LjI1NTEyNS0xNS43NTE1MTkgMjEuNTc5NTgydjQuNzI1NDU2YTI0LjU3MjM3MSAyNC41NzIzNzEgMCAwIDAtNy44NzU3NiAyMS41MDA4MjRjLTcuODc1NzYgMi4xMjY0NTUtNy44NzU3NiA0LjE3NDE1My03Ljg3NTc2IDYuMzAwNjA4YTI1LjkxMTI1IDI1LjkxMTI1IDAgMCAxLTcuODc1NzYgMjEuOTczMzd2Ny4wMDk0MjZjMCA5Ljc2NTk0Mi03Ljg3NTc2IDE5LjY4OTQtNy44NzU3NiAyOS43NzAzNzNhMjMuNjI3MjggMjMuNjI3MjggMCAwIDAtNy44NzU3NiAwbC0xNS43NTE1MiAwLjk0NTA5MWExMi42MDEyMTYgMTIuNjAxMjE2IDAgMCAxLTcuODc1NzU5IDAuOTQ1MDkxYzAgMC40NzI1NDYgMCAwLjg2NjMzNC03Ljg3NTc2IDEuNDk2Mzk1IDAgMC41NTEzMDMtNy44NzU3NiAxLjMzODg3OS03Ljg3NTc2IDIuMTI2NDU1cy03Ljg3NTc2IDEuMTAyNjA2LTcuODc1NzYgMS44MTE0MjQtNy44NzU3NiAyLjIwNTIxMy03Ljg3NTc2IDMuNDY1MzM1LTcuODc1NzYgMS4xODEzNjQtNy44NzU3NiAxLjgxMTQyNS03Ljg3NTc2IDMuMTUwMzA0LTcuODc1NzYgNC44ODI5NzFjMCAwLjQ3MjU0NiAwIDEuMDIzODQ5LTcuODc1NzYgMS41NzUxNTIgMCAxLjk2ODk0LTcuODc1NzYgNC4xNzQxNTMtNy44NzU3NiA2LjM3OTM2NXYxLjE4MTM2NGMtNy44NzU3NiAyLjUyMDI0My03Ljg3NTc2IDUuMTk4MDAyLTE1Ljc1MTUxOSA3Ljg3NTc2djAuNjMwMDYxYzAgMy4wNzE1NDYtNy44NzU3NiA2LjIyMTg1LTcuODc1NzYgOS41Mjk2NjlhMTcwLjM1MjY4NiAxNzAuMzUyNjg2IDAgMCAwLTYzLjAwNjA3OSAxMzIuNDcwMjgyIDE3Ni4wMjMyMzMgMTc2LjAyMzIzMyAwIDAgMCAxNzMuMjY2NzE3IDE3Ny4yMDQ1OTcgNTkuMjI1NzE0IDU5LjIyNTcxNCAwIDEgMSAwIDExOC4xMzYzOTggMjk2LjEyODU3MiAyOTYuMTI4NTcyIDAgMCAxLTg2LjYzMzM1OS01NzcuNzY1NzQ1QTQ2Ni4xNjYyMjggNDY2LjE2NjIyOCAwIDAgMSA2MzAuOTk0MjA2IDBhNDQ3LjM0MzE2MiA0NDcuMzQzMTYyIDAgMCAxIDQxNy40MTUyNzQgMjg4LjU2Nzg0MkEyOTIuNTg0NDggMjkyLjU4NDQ4IDAgMCAxIDEyNjEuMDU0OTk3IDU3MC45OTI1OTIgMjk3LjIzMTE3OCAyOTcuMjMxMTc4IDAgMCAxIDk2MS43NzYxMjIgODY2LjMzMzU4OHpNNDczLjQ3OTAwOSA3NDguMTk3MTg5YTQ5Ljg1MzU2IDQ5Ljg1MzU2IDAgMCAxIDM5LjM3ODc5OSAxNy4zMjY2NzJsMTEwLjI2MDYzOSAxMDcuMzQ2NjA3IDE3My4yNjY3MTctMjU1Ljk2MjE5NmE3Mi4yMjA3MTggNzIuMjIwNzE4IDAgMCAxIDQ3LjI1NDU1OS0yNi4yMjYyOCA1OC40MzgxMzggNTguNDM4MTM4IDAgMCAxIDYzLjAwNjA3OSA1OS4wNjgxOTljMCAxMi42MDEyMTYtNy44NzU3NiAyNC4yNTczNC03Ljg3NTc1OSAzMy43ODcwMWwtMjIwLjUyMTI3NyAzMTQuMTY0MDYyQTQ4Ljk4NzIyNyA0OC45ODcyMjcgMCAwIDEgNjMwLjk5NDIwNiAxMDIzLjg0ODc4NWE1MC4wODk4MzMgNTAuMDg5ODMzIDAgMCAxLTM5LjM3ODc5OS0xNy4yNDc5MTRsLTE1Ny41MTUxOTgtMTU3LjUxNTE5N2E0OS4zODEwMTQgNDkuMzgxMDE0IDAgMCAxLTIzLjYyNzI3OS00MS43NDE1MjhBNjMuMDA2MDc5IDYzLjAwNjA3OSAwIDAgMSA0NzMuNDc5MDA5IDc0OC4xOTcxODl6IiBmaWxsPSIjRkZGRkZGIiBwLWlkPSIyOTI0NiI+PC9wYXRoPjwvc3ZnPg=="
+                alt="Save" onclick="setKey()" />
+            <br />
+            <textarea id="editorData" type="text" placeholder="please input data"></textarea>
+        </div>
+
+        <h2>&nbsp;</h2>
+        <div id="result"></div>
     </div>
-
-    <h2>&nbsp;</h2>
-    <div id="editor">
-        <input id="editorKey" type="text" placeholder="please input key"/><br/>
-        <textarea id="editorData" type="text" placeholder="please input data"></textarea>
-        <img id="setKey" src="./icon/save.svg" alt="Save" onclick="setKey()"/>
-    </div>
-    
-    <h2>&nbsp;</h2>
-    <div id="result"></div>
 </body>
 
 </html>

@@ -39,3 +39,11 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 - Edit Support
 - Delete Support
 - Add Support
+
+## 0.1.6
+
+- Bug Fix
+
+## 0.1.7
+
+- Bug Fix
